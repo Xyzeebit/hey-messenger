@@ -1,0 +1,33 @@
+@import 'mixins/media';
+@import "./colors";
+
+
+.circle__image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 55px;
+  height: 55px;
+
+  .circle__image--container {
+    overflow: hidden;
+    border-radius: 100px;
+  }
+
+  .online__indicator {
+    width: 12px;
+    height: 12px;
+    background: $accent;
+    position: absolute;
+    right: -2px;
+    bottom: 8px;
+    border-radius: 100px;
+    border: 1px solid $white;
+  }
+  .profile__image {
+    width: 55px;
+    height: 55px;
+    border-radius: 100px;
+  }
+}

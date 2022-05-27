@@ -1,0 +1,27 @@
+{
+  "name": "rest-country-api",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "iron-session": "^6.1.3",
+    "mongoose": "^6.3.3",
+    "multer": "^1.4.4",
+    "nanoid": "^3.3.4",
+    "next": "^12.1.6",
+    "nodemailer": "^6.7.5",
+    "peerjs": "^1.4.4",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "socket.io": "^4.5.0",
+    "socket.io-client": "^4.5.0"
+  },
+  "devDependencies": {
+    "eslint": "8.9.0",
+    "eslint-config-next": "12.0.10"
+  }
+}

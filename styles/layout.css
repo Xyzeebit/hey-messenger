@@ -1,0 +1,64 @@
+body {
+  background: #e3e2e7;
+}
+
+.container {
+  width: 100vw;
+}
+
+@media screen and (max-width: 768px) {
+  .main {
+    overflow-x: hidden;
+    overflow-y: visible;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+}
+@media screen and (max-width: 768px) {
+  .main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    -webkit-transition: all 300ms ease-in-out;
+    transition: all 300ms ease-in-out;
+  }
+  .main .contact__list {
+    position: absolute;
+  }
+  .main .chat__window {
+    position: relative;
+    -webkit-transition: all 500ms ease-in-out;
+    transition: all 500ms ease-in-out;
+  }
+}
+@media screen and (max-width: 768px) and (max-width: 768px) {
+  .main .chat__window {
+    transform: translateX(100vw);
+  }
+  .main .chat__window .chats {
+    height: 100%;
+  }
+}
+@media screen and (min-width: 769px) {
+  .main {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+}
+@media screen and (min-width: 811px) {
+  .main {
+    padding: 2.5rem;
+  }
+  .main .chat__window {
+    height: 80vh;
+  }
+}
+@media screen and (min-width: 961px) {
+  .main {
+    padding: 3rem;
+  }
+}
+
+/*# sourceMappingURL=layout.css.map */

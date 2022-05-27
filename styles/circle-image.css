@@ -1,0 +1,29 @@
+.circle__image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 55px;
+  height: 55px;
+}
+.circle__image .circle__image--container {
+  overflow: hidden;
+  border-radius: 100px;
+}
+.circle__image .online__indicator {
+  width: 12px;
+  height: 12px;
+  background: #239644;
+  position: absolute;
+  right: -2px;
+  bottom: 8px;
+  border-radius: 100px;
+  border: 1px solid #fff;
+}
+.circle__image .profile__image {
+  width: 55px;
+  height: 55px;
+  border-radius: 100px;
+}
+
+/*# sourceMappingURL=circle-image.css.map */

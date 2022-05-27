@@ -1,0 +1,109 @@
+@import 'mixins/media';
+@import './colors';
+
+.contact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: $white;
+  padding: 1rem 1rem 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 300ms ease;
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &:hover {
+    background: $secondary;
+    .contact__name--message {
+      span:last-child {
+        color: $white;
+      }
+    }
+  }
+
+  .contact__name--message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    span:first-child {
+      font-weight: 500;
+      line-height: 1.5;
+    }
+  }
+
+  .time__count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .badge {
+    background: $badge;
+    border-radius: 100px;
+    color: $white;
+    width: 15px;
+    height: 15px;
+    padding: 0.1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.6rem;
+    margin: 0.2rem;
+  }
+}
+.contact__name--message {
+  width: 60%;
+
+  span:last-child {
+    color: $gray;
+    font-size: 0.8rem;
+    transition: color 300ms ease;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+  }
+}
+.time__count {
+  span:first-child {
+    font-weight: 700;
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+  }
+}
+
+.contact__list {
+  @include mobile {
+    width: 100%;
+  }
+  @include tablet {
+    width: 18rem;
+  }
+  @include desktop {
+    width: 20rem;
+  }
+  background: $white;
+  @include tablet {
+    border-radius: 20px;
+    overflow: hidden;
+  }
+}
+.contact__divider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .contact__divider--left {
+    width: 5.5rem;
+    height: 2px;
+    background: $white;
+  }
+  .contact__divider--right {
+    width: 12.5rem;
+    height: 2px;
+    background: $primary;
+  }
+}

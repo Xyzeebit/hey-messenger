@@ -1,0 +1,275 @@
+@import "colors";
+@import "mixins/media";
+
+.form_group {
+
+  .form_input__group {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+  .form_input__group label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    padding-bottom: 0.2rem;
+    font-weight: 500;
+  }
+  .form_input__group input {
+    height: 30px;
+    width: 94%;
+    padding-left: 0.5rem;
+    font-size: 1rem;
+    &:focus {
+      outline: 2px solid $accent;
+    }
+  }
+  .form_submit__button {
+    width: 100px;
+    height: 35px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    outline: none;
+    border: none;
+    background: linear-gradient(to left, $secondary, $accent);
+    color: $white;
+    transition: all 500ms ease-in;
+    &:hover {
+      background: linear-gradient(to left, $accent, $secondary);
+    }
+  }
+}
+
+.username_err,
+.name_err,
+.pwd_err,
+.cpwd_err {
+  color: red;
+}
+.form_err {
+  border: 2px solid $secondary;
+}
+.login_main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+
+  background: linear-gradient(270deg, #c3301c, #1c4dc3, #c8bbc7);
+  background-size: 600% 600%;
+
+  -webkit-animation: login-bg-gradient 15s ease infinite;
+  -moz-animation: login-bg-gradient 15s ease infinite;
+  -o-animation: login-bg-gradient 15s ease infinite;
+  animation: login-bg-gradient 15s ease infinite;
+
+  .login_container {
+    margin: 50px auto;
+    background: $white;
+    padding: 1.5rem 2rem 3rem 2rem;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+  }
+  .login_container h2 {
+    text-align: center;
+  }
+  .login_container img {
+    display: block;
+    margin: 0 auto;
+    padding-bottom: 10px;
+  }
+  .login_app__title {
+    font-size: 3rem;
+    font-weight: 300;
+  }
+  .login_app__title em {
+    background: $secondary;
+    color: $white;
+    padding: 0.5rem;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    box-shadow: 12px -9px 0px 0px #666;
+  }
+  .dont_have__account {
+    text-align: left;
+  }
+  .dont_have__account a {
+    color: blue;
+    font-weight: 500;
+  }
+}
+
+@-webkit-keyframes login-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-moz-keyframes login-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-o-keyframes login-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes login-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.signup_main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+
+  background: linear-gradient(270deg, #c3301c, #1c4dc3, #c8bbc7);
+  background-size: 600% 600%;
+
+  -webkit-animation: signup-bg-gradient 15s ease infinite;
+  -moz-animation: signup-bg-gradient 15s ease infinite;
+  -o-animation: signup-bg-gradient 15s ease infinite;
+  animation: signup-bg-gradient 15s ease infinite;
+
+  .signup_container {
+    margin: 30px auto;
+    background: $white;
+    padding: 1.5rem 2rem 2rem 2rem;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+  }
+  .signup_container h2 {
+    text-align: center;
+  }
+  .signup_container img {
+    display: block;
+    margin: 0 auto;
+    padding-bottom: 10px;
+  }
+  .signup_app__title {
+    font-weight: 300;
+    @include mobile {
+      font-size: 2rem;
+      padding-top: 2rem;
+    }
+    @include tablet {
+      font-size: 3rem;
+    }
+
+  }
+  .signup_app__title em {
+    background: $secondary;
+    color: $white;
+    padding: 0.5rem;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    box-shadow: 12px -9px 0px 0px #666;
+  }
+  .have__account {
+    text-align: left;
+  }
+  .have__account a {
+    color: blue;
+    font-weight: 500;
+  }
+}
+
+
+@-moz-keyframes signup-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-o-keyframes signup-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes signup-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+  margin-bottom: 0.2rem;
+
+  button {
+    outline: none;
+    border: none;
+    margin-left: 0.2rem;
+    background: none;
+  }
+  button:hover {
+
+  }
+}
+.danger {
+  background: $secondary;
+  color: darkred;
+}
+.warning {
+  background: orange;
+  color: yellow;
+}
+.success {
+  background: $accent;
+  color: $white;
+}

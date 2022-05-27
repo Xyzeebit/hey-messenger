@@ -1,0 +1,182 @@
+.profile_page__main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.profile_page__main .profile_page {
+  background: linear-gradient(-180deg, #ee7752, #ceb9c1, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  -webkit-animation: gradient 15s ease infinite;
+  -moz-animation: gradient 15s ease infinite;
+  -o-animation: gradient 15s ease infinite;
+  animation: gradient 15s ease infinite;
+}
+@media screen and (min-width: 320px) {
+  .profile_page__main .profile_page {
+    width: 100%;
+    padding: 1rem 1rem 2rem 1em;
+  }
+}
+@media screen and (min-width: 811px) {
+  .profile_page__main .profile_page {
+    width: 20rem;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+  }
+}
+.profile_page__main .profile_image__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  margin: 0 auto;
+  -webkit-border-radius: 100px;
+  border-radius: 100px;
+}
+.profile_page__main .profile_image__container img {
+  width: 100%;
+  height: 100%;
+}
+.profile_page__main .logout_button {
+  border: 2px solid #e3e2e7;
+  outline: none;
+  box-shadow: 0px 0px 2px #fff, 0px 0px 2px #fff, 0px 0px 2px #fff, 0px 0px 2px #fff;
+  padding: 8px 20px 8px 20px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  transition: all 300ms ease;
+}
+.profile_page__main .logout_button:hover {
+  color: #e25151;
+  border: 2px solid #e25151;
+  font-weight: 600;
+}
+.profile_page__main .invite_friend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  margin: 1rem 0;
+}
+.profile_page__main .invite_group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e25151;
+  padding: 0.2rem;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
+}
+.profile_page__main .user_link {
+  font-size: 0.7rem;
+  padding: 0.3rem;
+  overflow: auto;
+}
+.profile_page__main .copy_link__button {
+  margin-left: 0.2rem;
+  padding: 5px 15px 5px 15px;
+  background: #e25151;
+  color: #fff;
+  border: none;
+  outline: none;
+  transition: all 300ms ease;
+  border-radius: 20px;
+  -webkit-border-radius: 10px;
+}
+.profile_page__main .copy_link__button:hover {
+  background: #ea6d31;
+}
+.profile_page__main .edit_buttons {
+  display: inline-block;
+  margin-bottom: 3rem;
+}
+.profile_page__main .edit_buttons button {
+  margin: 0.5rem;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  background: #e3e2e7;
+  border: 2px solid #e3e2e7;
+  outline: none;
+  padding: 8px;
+  transition: all 300ms ease;
+  box-shadow: 0px 0px 2px grey;
+  font-size: 0.7rem;
+}
+.profile_page__main .edit_buttons button:not(:disabled):hover {
+  background: #e25151;
+  color: #fff;
+}
+.profile_page__main .profile_detail {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.profile_page__main .profile_detail .label {
+  padding: 1rem 1rem 1rem 0;
+  width: 40%;
+}
+.profile_page__main .profile_detail .value {
+  text-align: center;
+  padding: 1rem 3rem 1rem 3rem;
+  border-bottom: 2px dotted #e25151;
+  font-style: italic;
+  width: 60%;
+  font-size: 1.3rem;
+}
+.profile_page__main .profile_detail .input input {
+  border: none;
+  outline: none;
+  background: none;
+  width: 100%;
+  font-size: 1rem;
+}
+
+@-webkit-keyframes login-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-moz-keyframes signup-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-o-keyframes signup-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
+}
+
+/*# sourceMappingURL=profile-page.css.map */

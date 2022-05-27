@@ -1,0 +1,180 @@
+@import 'mixins/media';
+@import './colors';
+
+.message {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+
+  .bubble {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    word-break: break-all;
+  }
+  .in {
+    align-self: flex-end;
+    background: $bubble-in;
+    border-bottom-right-radius: 0;
+  }
+  .out {
+    align-self: flex-start;
+    background: $bubble-out;
+    border-top-left-radius: 0;
+  }
+}
+
+.chats {
+  padding: 1rem;
+  background: $white;
+  padding-bottom: 8rem;
+  overflow-y: auto;
+  position: absolute;
+  top: 70px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+}
+
+.chat__window {
+  position: relative;
+  @include mobile {
+    width: 100%;
+  }
+  @include tablet {
+    width: 50%;
+  }
+}
+
+.chat__bar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background: $accent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem 1rem 0.2rem;
+
+}
+.chat__bar--left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .go__back {
+    background: none;
+    outline: none;
+    border: none;
+    transition: all 300ms forward;
+    border-radius: 100px;
+    padding: 0.4rem;
+    @include tablet {
+      display: none;
+    }
+    &:active {
+      background: $gray;
+      .icon__back {
+        transform: scale(0.6) rotate(180deg);
+      }
+    }
+  }
+  .icon__back {
+    transform: scale(0.9) rotate(180deg);
+    filter: invert(100%);
+  }
+  .profile__photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+    margin-left: 0.5rem;
+  }
+  span {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-left: 0.5rem;
+    color: $white;
+  }
+}
+
+.input__bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: $white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .input__group {
+    width: 90%;
+    background: $primary;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    border-radius: 30px;
+  }
+  .icon__emoji {
+    margin-right: 0.2rem;
+    border: none;
+    outline: none;
+    background: none;
+  }
+  .chat__input--box {
+    width: 100%;
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: none;
+    @include mobile {
+      // height: 2rem;
+    }
+    @include tablet {
+      // height: 2.5rem;
+    }
+  }
+  .send__message--button {
+    border: none;
+    outline: none;
+    background: $accent;
+    border-radius: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 300ms ease-in;
+
+    &:active {
+      transform: scale(0.8);
+    }
+
+    @include mobile {
+      margin: 0.3rem;
+      padding: 0.6rem;
+    }
+    @include tablet {
+      margin: 0.5rem;
+      padding: 0.6rem;
+    }
+
+    img {
+      filter: invert(100%);
+
+      @include mobile {
+        width: 25px;
+        height: 25px;
+      }
+      @include tablet {
+        width: 25px;
+        height: 25px;
+      }
+    }
+  }
+}

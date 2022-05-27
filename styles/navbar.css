@@ -1,0 +1,84 @@
+nav.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media screen and (min-width: 320px) {
+  nav.navbar {
+    padding: 0.8rem 1.5rem 0.8rem 1.5rem;
+  }
+}
+@media screen and (min-width: 811px) {
+  nav.navbar {
+    padding: 1rem 3rem 1rem 3rem;
+  }
+}
+nav.navbar .navbar__brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+@media screen and (min-width: 320px) {
+  nav.navbar .navbar__brand--logo {
+    width: 40px;
+    height: 40px;
+  }
+}
+@media screen and (min-width: 811px) {
+  nav.navbar .navbar__brand--logo {
+    width: 50px;
+    height: 50px;
+  }
+}
+nav.navbar .navbar__brand--appname span {
+  color: #e25151;
+  font-style: italic;
+}
+@media screen and (min-width: 320px) {
+  nav.navbar .navbar__brand--appname {
+    font-weight: 700;
+    margin-left: 0.5rem;
+    font-size: 1rem;
+  }
+}
+@media screen and (min-width: 811px) {
+  nav.navbar .navbar__brand--appname {
+    font-weight: 800;
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+  }
+}
+nav.navbar .menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+nav.navbar .menu__item {
+  outline: none;
+  border: none;
+  background: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 300ms ease;
+  font-weight: 700;
+}
+@media screen and (min-width: 811px) {
+  nav.navbar .menu__item {
+    font-size: 1rem;
+  }
+}
+nav.navbar .menu__item:hover {
+  color: #239644;
+}
+nav.navbar .active {
+  color: #239644;
+  border-bottom: 2px solid #239644;
+}
+nav.navbar .profile__button {
+  margin-right: 0.5rem;
+}
+nav.navbar .sign-up__button {
+  margin: 0 0.5rem 0 0.5rem;
+}
+
+/*# sourceMappingURL=navbar.css.map */

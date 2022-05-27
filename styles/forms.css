@@ -1,0 +1,265 @@
+.form_group .form_input__group {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+.form_group .form_input__group label {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  padding-bottom: 0.2rem;
+  font-weight: 500;
+}
+.form_group .form_input__group input {
+  height: 30px;
+  width: 94%;
+  padding-left: 0.5rem;
+  font-size: 1rem;
+}
+.form_group .form_input__group input:focus {
+  outline: 2px solid #239644;
+}
+.form_group .form_submit__button {
+  width: 100px;
+  height: 35px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  outline: none;
+  border: none;
+  background: linear-gradient(to left, #e25151, #239644);
+  color: #fff;
+  transition: all 500ms ease-in;
+}
+.form_group .form_submit__button:hover {
+  background: linear-gradient(to left, #239644, #e25151);
+}
+
+.username_err,
+.name_err,
+.pwd_err,
+.cpwd_err {
+  color: red;
+}
+
+.form_err {
+  border: 2px solid #e25151;
+}
+
+.login_main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(270deg, #c3301c, #1c4dc3, #c8bbc7);
+  background-size: 600% 600%;
+  -webkit-animation: login-bg-gradient 15s ease infinite;
+  -moz-animation: login-bg-gradient 15s ease infinite;
+  -o-animation: login-bg-gradient 15s ease infinite;
+  animation: login-bg-gradient 15s ease infinite;
+}
+.login_main .login_container {
+  margin: 50px auto;
+  background: #fff;
+  padding: 1.5rem 2rem 3rem 2rem;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
+}
+.login_main .login_container h2 {
+  text-align: center;
+}
+.login_main .login_container img {
+  display: block;
+  margin: 0 auto;
+  padding-bottom: 10px;
+}
+.login_main .login_app__title {
+  font-size: 3rem;
+  font-weight: 300;
+}
+.login_main .login_app__title em {
+  background: #e25151;
+  color: #fff;
+  padding: 0.5rem;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  box-shadow: 12px -9px 0px 0px #666;
+}
+.login_main .dont_have__account {
+  text-align: left;
+}
+.login_main .dont_have__account a {
+  color: blue;
+  font-weight: 500;
+}
+
+@-webkit-keyframes login-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-moz-keyframes login-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-o-keyframes login-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes login-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.signup_main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(270deg, #c3301c, #1c4dc3, #c8bbc7);
+  background-size: 600% 600%;
+  -webkit-animation: signup-bg-gradient 15s ease infinite;
+  -moz-animation: signup-bg-gradient 15s ease infinite;
+  -o-animation: signup-bg-gradient 15s ease infinite;
+  animation: signup-bg-gradient 15s ease infinite;
+}
+.signup_main .signup_container {
+  margin: 30px auto;
+  background: #fff;
+  padding: 1.5rem 2rem 2rem 2rem;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
+}
+.signup_main .signup_container h2 {
+  text-align: center;
+}
+.signup_main .signup_container img {
+  display: block;
+  margin: 0 auto;
+  padding-bottom: 10px;
+}
+.signup_main .signup_app__title {
+  font-weight: 300;
+}
+@media screen and (min-width: 320px) {
+  .signup_main .signup_app__title {
+    font-size: 2rem;
+    padding-top: 2rem;
+  }
+}
+@media screen and (min-width: 811px) {
+  .signup_main .signup_app__title {
+    font-size: 3rem;
+  }
+}
+.signup_main .signup_app__title em {
+  background: #e25151;
+  color: #fff;
+  padding: 0.5rem;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  box-shadow: 12px -9px 0px 0px #666;
+}
+.signup_main .have__account {
+  text-align: left;
+}
+.signup_main .have__account a {
+  color: blue;
+  font-weight: 500;
+}
+
+@-moz-keyframes signup-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-o-keyframes signup-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes signup-bg-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+  margin-bottom: 0.2rem;
+}
+.alert button {
+  outline: none;
+  border: none;
+  margin-left: 0.2rem;
+  background: none;
+}
+.danger {
+  background: #e25151;
+  color: darkred;
+}
+
+.warning {
+  background: orange;
+  color: yellow;
+}
+
+.success {
+  background: #239644;
+  color: #fff;
+}
+
+/*# sourceMappingURL=forms.css.map */

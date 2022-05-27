@@ -1,0 +1,14 @@
+{
+	"version": 3,
+	"file": "globals.css",
+	"sources": [
+		"../sass/globals.scss",
+		"../sass/_topography.scss"
+	],
+	"sourcesContent": [
+		"@import 'topography';\r\n\r\nhtml, \r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n    font-family: sans-serif;\r\n}\r\n* {\r\n    box-sizing: border-box;\r\n}",
+		"$darkBlue: hsl(209, 23%, 22%); // Dark Mode Elements\r\n$veryDarkBlue: hsl(207, 26%, 17%); // Dark Mode Background\r\n$veryDarkBlueText: hsl(200, 15%, 8%); // Light Mode Text\r\n$darkGray: hsl(0, 0%, 52%); // Light Mode Input\r\n$veryLightGray: hsl(0, 0%, 98%); // Light Mode Background\r\n$white: hsl(0, 0%, 100%); // Dark Mode Text & Light Mode Elements\r\n\r\n// Body Copy - Homepage Items: 14px - Detail Page: 16px\r\n\r\n// Fonts - Family: [Nunito Sans](https: //fonts.google.com/specimen/Nunito+Sans)\r\n//    - Weights: 300, 600, 800\r\n\r\n//- Mobile: 375px - Desktop: 1440px"
+	],
+	"names": [],
+	"mappings": ";AAEA,AAAA,IAAI;AACJ,IAAI,CAAC;EACD,MAAM,EAAE,CAAC;EACT,OAAO,EAAE,CAAC;EACV,WAAW,EAAE,UAAU;CAC1B;;;AACD,AAAA,CAAC,CAAC;EACE,UAAU,EAAE,UAAU;CACzB"
+}

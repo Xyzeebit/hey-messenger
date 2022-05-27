@@ -1,0 +1,109 @@
+.contact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 1rem 1rem 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+.contact:active {
+  transform: scale(0.9);
+}
+.contact:hover {
+  background: #e25151;
+}
+.contact:hover .contact__name--message span:last-child {
+  color: #fff;
+}
+.contact .contact__name--message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+.contact .contact__name--message span:first-child {
+  font-weight: 500;
+  line-height: 1.5;
+}
+.contact .time__count {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+}
+.contact .badge {
+  background: #ea6d31;
+  border-radius: 100px;
+  color: #fff;
+  width: 15px;
+  height: 15px;
+  padding: 0.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.6rem;
+  margin: 0.2rem;
+}
+
+.contact__name--message {
+  width: 60%;
+}
+.contact__name--message span:last-child {
+  color: grey;
+  font-size: 0.8rem;
+  transition: color 300ms ease;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+}
+
+.time__count span:first-child {
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+}
+
+.contact__list {
+  background: #fff;
+}
+@media screen and (min-width: 320px) {
+  .contact__list {
+    width: 100%;
+  }
+}
+@media screen and (min-width: 811px) {
+  .contact__list {
+    width: 18rem;
+  }
+}
+@media screen and (min-width: 1281px) {
+  .contact__list {
+    width: 20rem;
+  }
+}
+@media screen and (min-width: 811px) {
+  .contact__list {
+    border-radius: 20px;
+    overflow: hidden;
+  }
+}
+
+.contact__divider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.contact__divider .contact__divider--left {
+  width: 5.5rem;
+  height: 2px;
+  background: #fff;
+}
+.contact__divider .contact__divider--right {
+  width: 12.5rem;
+  height: 2px;
+  background: #e3e2e7;
+}
+
+/*# sourceMappingURL=contact.css.map */

@@ -61,12 +61,7 @@ export const initialState = {
     ]
   },
   chats: {
-    'ui3oiw7sn': [{_id: `${(new Date().getTime())}`, msg: 'Hello', sender: 'owner'}],
-    'uio3iw7sn': [{_id: `${(new Date().getTime())}`, msg: 'Hello', sender: 'friend'}],
-    'uidoiw7sn': [{_id: `${(new Date().getTime())}`, msg: 'Hello', sender: 'friend'}],
-    'uioiw97sn': [{_id: `${(new Date().getTime())}`, msg: 'Hello', sender: 'owner'}],
-    'uio09iw7sn': [{_id: `${(new Date().getTime())}`, msg: 'Hello', sender: 'friend'}],
-    'y9899p0msi': [{_id: `${(new Date().getTime())}`, msg: 'Hello', sender: 'owner'}],
+
   },
   newConversation: {
     name: '',
@@ -84,7 +79,7 @@ function contactsReducer(state, action) {
       if(found) {
         return state;
       }
-      // console.log(action.contact)
+      console.log(action.contact)
       return [...state, action.contact ];
     case 'GET_CONTACT':
       const contact = state.find(c => c.username === action.username);
@@ -96,16 +91,22 @@ function contactsReducer(state, action) {
 function chatReducer(state, action) {
   switch (action.type) {
     case 'SEND_MESSAGE':
+      let time = new Date().getTime();
       const newMsg = {
-        _id: (new Date().getTime()),
-        msg: action.message,
-        sender: action.sender
+        _id: time,
+        from: action.message.from,
+        to: action.message.to,
+        text: action.message.text,
+        time,
       }
-      const userChats = state[action._id];
-      state[action._id].push(newMsg);
-      return { ...state };
-
-    case 'UPDATE_CHATS': return { ...action.chats };
+      if(state[action.chatId]) {
+        state[action.chatId].messages.push(newMsg);
+        return state;
+      }
+      break;
+    case 'UPDATE_CHATS':
+      state[action.chatId] = action.messages;
+      return state;
 
     default: return state;
   }

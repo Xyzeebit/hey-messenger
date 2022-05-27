@@ -3,8 +3,9 @@ import io from 'socket.io-client';
 
 let chatRef;
 
-export default function ChatWindow ({ contact, dispatch }) {
-  const { name, chatId, messages, id, profilePhoto, showChatWindow } = contact
+export default function ChatWindow ({ contact, messages, owner, dispatch }) {
+  const { name, chatId, username, id, profilePhoto, showChatWindow } = contact;
+  const contactMessages = messages[chatId];
 
   return (
     <div className="chat__window"
@@ -14,8 +15,8 @@ export default function ChatWindow ({ contact, dispatch }) {
         <>
           <ChatBar name={name} photo={profilePhoto}
             showChatWindow={showChatWindow} dispatch={dispatch} />
-          <Chats chats={messages} />
-          <InputBar id={id} dispatch={dispatch} />
+          <Chats chats={contactMessages.messages} owner={owner} />
+          <InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
         </>
       }
     </div>
@@ -54,7 +55,7 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
   );
 }
 
-const InputBar = ({ id, dispatch }) => {
+const InputBar = ({ chatId, from, sendTo, dispatch }) => {
   const [chatInputValue, setChatInputValue] = useState('');
   const inputRef = useRef();
   // const socket = useContext(SocketContext);
@@ -67,7 +68,14 @@ const InputBar = ({ id, dispatch }) => {
   }
 
   const handleSendMessage = evt => {
-    dispatch({ type: 'SEND_MESSAGE', message: chatInputValue, sender: 'owner', _id: id });
+    const message = {
+      from,
+      to: sendTo,
+      text: chatInputValue,
+      chatId,
+      read: false
+    }
+    dispatch({ type: 'SEND_MESSAGE', message, chatId });
     inputRef.current.style.height = '1px';
 
     socket.emit('my-chat', chatInputValue);
@@ -122,25 +130,26 @@ const InputBar = ({ id, dispatch }) => {
 }
 
 
-const Chats = ({ chats }) => {
+const Chats = ({ chats, owner }) => {
   chatRef = useRef();
   return (
     <div className="chats" ref={chatRef}>
       {chats.length > 0 && chats.map(chat => {
-        return <Message key={chat._id} message={chat.text} sender={chat.from} />
+        return <Message key={chat._id} message={chat.text}
+        sender={chat.from} owner={owner}/>
       })}
     </div>
   );
 }
 
-function Message({ message, sender }) {
+function Message({ message, sender, owner }) {
   return (
     <div className="message">
-      <ChatBubble message={message} sender={sender} />
+      <ChatBubble message={message} self={sender === owner} />
     </div>
   );
 }
 
-function ChatBubble({ message, sender }) {
-  return <span className={`bubble ${sender === 'owner' ? 'in' : 'out'}`}>{message}</span>
+function ChatBubble({ message, self }) {
+  return <span className={`bubble ${self ? 'in' : 'out'}`}>{message}</span>
 }

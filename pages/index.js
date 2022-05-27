@@ -90,7 +90,12 @@ export default function Home({ userSession }) {
 
           <div className="main">
             <ContactList contacts={contacts} dispatch={dispatch} />
-            <ChatWindow contact={newConversation} dispatch={dispatch} />
+            <ChatWindow
+              contact={newConversation}
+              messages={chats}
+              owner={appState.user.username}
+              dispatch={dispatch}
+            />
           </div>
 
         </div>

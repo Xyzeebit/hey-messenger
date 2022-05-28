@@ -145,7 +145,7 @@ const UserDetails = ({ userInfo }) => {
 }
 
 const UserActions = ({ isLoggedIn, onEvent }) => {
-  console.log('actions is logged in ' + isLoggedIn)
+  // console.log('actions is logged in ' + isLoggedIn)
   return (
     <div className="user_actions">
       {

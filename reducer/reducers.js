@@ -1,3 +1,6 @@
+import io from 'socket.io-client';
+const socket = io();
+
 export const initialState = {
   contacts: [],
   user: {
@@ -79,7 +82,7 @@ function contactsReducer(state, action) {
       if(found) {
         return state;
       }
-      console.log(action.contact)
+      // console.log(action.contact)
       return [...state, action.contact ];
     case 'GET_CONTACT':
       const contact = state.find(c => c.username === action.username);
@@ -98,12 +101,20 @@ function chatReducer(state, action) {
         to: action.message.to,
         text: action.message.text,
         time,
+        chatId: action.chatId
       }
+      socket.emit('my-chat', newMsg);
+
+      return state;
+
+    case 'ADD_MESSAGE':
+    console.log('adding message', action.chatId)
       if(state[action.chatId]) {
-        state[action.chatId].messages.push(newMsg);
-        return state;
+        state[action.chatId].messages.push(action.message);
+        console.log('message added: ', state[action.chatId].messages)
       }
-      break;
+      // console.log('message added: ', state)
+      return state;
     case 'UPDATE_CHATS':
       state[action.chatId] = action.messages;
       return state;

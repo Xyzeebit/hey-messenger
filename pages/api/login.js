@@ -24,13 +24,13 @@ export default withIronSessionApiRoute(async (req, res) => {
         lastSeen: user.lastSeen
       }
 
-      req.session.user = {
-        id: user._id,
-        username: user.username,
-        link: user.link,
-        isLoggedIn: true,
-      };
-      await req.session.save();
+      // req.session.user = {
+      //   id: user._id,
+      //   username: user.username,
+      //   link: user.link,
+      //   isLoggedIn: true,
+      // };
+      // await req.session.save();
 
       res.json(_user)
 

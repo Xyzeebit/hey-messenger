@@ -1,12 +1,11 @@
 import { useState, useReducer, useRef, useEffect, useContext } from 'react';
-import io from 'socket.io-client';
 
 let chatRef;
 
 export default function ChatWindow ({ contact, messages, owner, dispatch }) {
   const { name, chatId, username, id, profilePhoto, showChatWindow } = contact;
   const contactMessages = messages[chatId];
-
+  
   return (
     <div className="chat__window"
       style={{transform: `translateX(${showChatWindow ? 0 : '100vw'})`}}
@@ -58,8 +57,7 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
 const InputBar = ({ chatId, from, sendTo, dispatch }) => {
   const [chatInputValue, setChatInputValue] = useState('');
   const inputRef = useRef();
-  // const socket = useContext(SocketContext);
-  const socket = io();
+
 
   const handleChatInput = ({ target }) => {
     setChatInputValue(target.value);
@@ -77,8 +75,8 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
     }
     dispatch({ type: 'SEND_MESSAGE', message, chatId });
     inputRef.current.style.height = '1px';
-
-    socket.emit('my-chat', chatInputValue);
+    // emit to chatId
+    // socket.emit('my-chat', message);
 
     setChatInputValue('');
 

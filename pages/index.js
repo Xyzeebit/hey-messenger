@@ -14,15 +14,21 @@ import StateContext from '../components/StateContext';
 import io from 'socket.io-client';
 
 
-let socket;
+const connectToSocket = async (username) => {
+  await fetch('/api/socket?username=' + username);
+}
 
+// const URL = 'api/socket'
+let socket = io();
+let callCount = 0;
 
 export default function Home({ userSession }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [appState, setAppState] = useContext(StateContext);
   const { user, contacts, chats, newConversation } = state;
-  const [connected, setConnected] = useState(false);
   const [users, setUsers] = useState({});
+  const [messages, setMessages] = useState({});
+  const [newMessage, setMessage] = useState({});
   const router = useRouter();
 
   useEffect(() => {
@@ -49,27 +55,42 @@ export default function Home({ userSession }) {
 
   }, []);
 
+  useEffect(() => {
+    setMessages(chats);
+  }, [chats])
 
-  const connectToSocket = async () => {
-    await fetch('/api/socket');
-  }
+  useEffect(() => {
+    dispatch({ type: 'ADD_MESSAGE', message: newMessage, chatId: newMessage.chatId });
+    console.log('new message', newMessage)
+    // const msgs = messages[newMessage.chatId].messages;
+    // msgs.messages.push(newMessage);
+    // setMessages({ ...messages, [(newMessage.chatId)]: msgs })
+    // console.log(messages)
+  }, [newMessage.time]);
+
 
   useEffect(() => {
 
-    if(!connected && appState.user.isLoggedIn) {
-      connectToSocket();
-
-      socket = io();
-
+    if(appState.user.isLoggedIn) {
+      connectToSocket(appState.user.username);
+       // socket = io();
+      // socket.auth = { username: appState.user.username } // Change to chatId
+      // socket.connect();
       socket.on('connect', () => {
         console.log('connected');
-        setConnected(true);
+
       });
 
       // socket.emit('my-chat', 'hello world');
 
-      socket.on('your-chat', msg => {
-        console.log(msg);
+      socket.on('my-chat', msg => {
+        console.log('from: ', msg.from, 'to: ', msg.to, 'chat id:', msg.chatId,
+        'body: ', msg.text);
+        // alert(msg.text);
+        setMessage(msg);
+      });
+      socket.on('is online', msg => {
+        console.log('I am ', msg);
       });
     }
 
@@ -92,7 +113,7 @@ export default function Home({ userSession }) {
             <ContactList contacts={contacts} dispatch={dispatch} />
             <ChatWindow
               contact={newConversation}
-              messages={chats}
+              messages={messages}
               owner={appState.user.username}
               dispatch={dispatch}
             />

@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
 
   if(minimal) {
-    console.log('minimal')
+    // console.log('minimal')
     const user = await User.findOne({ username: slug })
       .populate('messages', 'messages chatId')
       .exec();

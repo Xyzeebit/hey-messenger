@@ -1,5 +1,7 @@
-import io from 'socket.io-client';
-const socket = io();
+// import io from 'socket.io-client';
+// const socket = io();
+import { socket } from '../lib/init-socket';
+import { nanoid } from 'nanoid';
 
 export const initialState = {
   contacts: [],
@@ -70,12 +72,14 @@ export const initialState = {
     name: '',
     username: '',
     profilePhoto: '',
+    messages: [],
     showChatWindow: false
   },
   active: 'home'
 };
 
 function contactsReducer(state, action) {
+  var contact, index;
   switch (action.type) {
     case 'ADD_CONTACT':
       const found = state.find(c => c.username === action.contact.username);
@@ -85,43 +89,88 @@ function contactsReducer(state, action) {
       // console.log(action.contact)
       return [...state, action.contact ];
     case 'GET_CONTACT':
-      const contact = state.find(c => c.username === action.username);
+      contact = state.find(c => c.username === action.username);
       return contact;
-    default: return state;
-  }
-}
 
-function chatReducer(state, action) {
-  switch (action.type) {
     case 'SEND_MESSAGE':
+      // contact = state.find(c => c.username === action.username);
       let time = new Date().getTime();
       const newMsg = {
-        _id: time,
+        _id: nanoid(20),
         from: action.message.from,
         to: action.message.to,
         text: action.message.text,
         time,
         chatId: action.chatId
-      }
+      };
+      console.log('reducer socket id', socket.id);
       socket.emit('my-chat', newMsg);
-
       return state;
 
     case 'ADD_MESSAGE':
-    console.log('adding message', action.chatId)
-      if(state[action.chatId]) {
-        state[action.chatId].messages.push(action.message);
-        console.log('message added: ', state[action.chatId].messages)
+      if(action.owner === action.message.from || action.owner === action.message.to) {
+        if(action.message.from !== action.message.to) {
+          contact = state.find(c => c.username === action.message.to);
+          let sender = state.find(c => c.username === action.message.from);
+
+          if(contact) {
+            index = state.indexOf(contact);
+            contact.messages.messages.push(action.message);
+            state[index] = contact;
+          }
+          if(sender) {
+            index = state.indexOf(sender);
+            sender.messages.messages.push(action.message);
+            state[index] = sender;
+          }
+        }
       }
-      // console.log('message added: ', state)
+
       return state;
+
     case 'UPDATE_CHATS':
+
       state[action.chatId] = action.messages;
       return state;
+
 
     default: return state;
   }
 }
+
+// function chatReducer(state, action) {
+  // switch (action.type) {
+  //   case 'SEND_MESSAGE':
+  //     let time = new Date().getTime();
+  //     const newMsg = {
+  //       _id: time,
+  //       from: action.message.from,
+  //       to: action.message.to,
+  //       text: action.message.text,
+  //       time,
+  //       chatId: action.chatId
+  //     }
+  //     console.log('reducer socket id', socket.id);
+  //     socket.emit(socket.id, newMsg);
+  //
+  //     return state;
+  //
+  //   case 'ADD_MESSAGE':
+  //   // console.log('adding message before state', state)
+  //     if(state[action.chatId]) {
+  //       // console.log('about to add message...')
+  //       state[action.chatId].messages.push(action.message);
+  //       // console.log('message added: ', state[action.chatId].messages)
+  //     }
+  //     // console.log('message added: ', state)
+  //     return state;
+  //   case 'UPDATE_CHATS':
+  //     state[action.chatId] = action.messages;
+  //     return state;
+  //
+  //   default: return state;
+  // }
+// }
 
 function userReducer(state, action) {
   switch (action.type) {
@@ -158,7 +207,7 @@ function activeLinkReducer(state, action) {
 export function appReducer(state, action) {
   return {
     user: userReducer(state.user, action),
-    chats: chatReducer(state.chats, action),
+    // chats: chatReducer(state.chats, action),
     newConversation: newConversationReducer(state.newConversation, action),
     active: activeLinkReducer(state.active, action),
     contacts: contactsReducer(state.contacts, action)

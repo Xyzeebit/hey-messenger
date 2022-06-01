@@ -3,7 +3,7 @@ import { sessionOptions } from "../lib/session";
 import { useReducer, useEffect, useLayoutEffect, useState, useContext } from 'react';
 import Head from 'next/head'
 import { useRouter } from 'next/router';
-import initSocket from '../lib/init-socket';
+import { useSocket } from '../lib/init-socket';
 import { fetchUser, fetchContacts } from '../lib/fetchUser';
 
 import Layout from '../components/Layout';
@@ -14,13 +14,13 @@ import StateContext from '../components/StateContext';
 import io from 'socket.io-client';
 
 
-const connectToSocket = async (username) => {
-  await fetch('/api/socket?username=' + username);
-}
+// const connectToSocket = async (username) => {
+//   await fetch('/api/socket?username=' + username);
+// }
 
-// const URL = 'api/socket'
-let socket = io();
-let callCount = 0;
+// // const URL = 'api/socket'
+// let socket = io();
+// let callCount = 0;
 
 export default function Home({ userSession }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
@@ -41,7 +41,6 @@ export default function Home({ userSession }) {
       if(localSession.isLoggedIn) {
         fetchUser(localSession.username, false, user => {
           if(user) {
-            console.log('fetched user', user)
             setAppState({ ...appState, user, isLoggedIn: true });
           }
         });
@@ -60,37 +59,15 @@ export default function Home({ userSession }) {
   }, [chats])
 
   useEffect(() => {
-    dispatch({ type: 'ADD_MESSAGE', message: newMessage, chatId: newMessage.chatId });
-    console.log('new message', newMessage)
-    // const msgs = messages[newMessage.chatId].messages;
-    // msgs.messages.push(newMessage);
-    // setMessages({ ...messages, [(newMessage.chatId)]: msgs })
-    // console.log(messages)
-  }, [newMessage.time]);
+    dispatch({ type: 'ADD_MESSAGE', message: newMessage, owner: appState.user.username });
+  }, [newMessage._id]);
 
 
   useEffect(() => {
 
     if(appState.user.isLoggedIn) {
-      connectToSocket(appState.user.username);
-       // socket = io();
-      // socket.auth = { username: appState.user.username } // Change to chatId
-      // socket.connect();
-      socket.on('connect', () => {
-        console.log('connected');
-
-      });
-
-      // socket.emit('my-chat', 'hello world');
-
-      socket.on('my-chat', msg => {
-        console.log('from: ', msg.from, 'to: ', msg.to, 'chat id:', msg.chatId,
-        'body: ', msg.text);
-        // alert(msg.text);
-        setMessage(msg);
-      });
-      socket.on('is online', msg => {
-        console.log('I am ', msg);
+      useSocket(appState.user.username, ({ socketId, message}) => {
+        setMessage(message);
       });
     }
 
@@ -113,7 +90,6 @@ export default function Home({ userSession }) {
             <ContactList contacts={contacts} dispatch={dispatch} />
             <ChatWindow
               contact={newConversation}
-              messages={messages}
               owner={appState.user.username}
               dispatch={dispatch}
             />

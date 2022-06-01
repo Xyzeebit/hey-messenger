@@ -44,20 +44,25 @@ export default async function handler(req, res) {
 
 let counter = 0;
 function communicator(io, rooms) {
-  if(counter < 1) {
+  // if(counter < 1) {
     io.on('connection', socket => {
-      console.log(socket.id);
+      console.log(socket.id, ' connecting for the ' + counter + ' time');
       console.log('counter', counter++);
+
+      // socket.on('my-chat', data => {
+      //
+      // })
+      // console.log('rooms: ', rooms);
       for (let room of rooms) {
+        // console.log('room: ' + room)
         socket.join(room);
         // send message to all users in room can be use for is online functionalty
-        socket.broadcast.to(room).emit('is online', true);
+        // socket.broadcast.to(room).emit('is online', true);
       }
-
+      // console.log('rooms in socket', socket.rooms)
       socket.on('my-chat', msg => {
-        socket.to(msg.chatId).emit('my-chat', msg)
+        io.to(msg.chatId).emit('my-chat', msg)
         // socket.broadcast.emit('your-chat' + msg + ' from server');
-        // console.log(msg);
       });
 
     });
@@ -65,5 +70,5 @@ function communicator(io, rooms) {
     io.on('disconnect', socket =>  {
       console.log('disconnected');
     })
-  }
+  // }
 }

@@ -2,10 +2,11 @@ import { useState, useReducer, useRef, useEffect, useContext } from 'react';
 
 let chatRef;
 
-export default function ChatWindow ({ contact, messages, owner, dispatch }) {
-  const { name, chatId, username, id, profilePhoto, showChatWindow } = contact;
+export default function ChatWindow ({ contact, owner, dispatch }) {
+  const { name, chatId, username, id, profilePhoto, messages, showChatWindow } = contact;
   const contactMessages = messages[chatId];
-  
+
+  // console.log(messages)
   return (
     <div className="chat__window"
       style={{transform: `translateX(${showChatWindow ? 0 : '100vw'})`}}
@@ -14,7 +15,7 @@ export default function ChatWindow ({ contact, messages, owner, dispatch }) {
         <>
           <ChatBar name={name} photo={profilePhoto}
             showChatWindow={showChatWindow} dispatch={dispatch} />
-          <Chats chats={contactMessages.messages} owner={owner} />
+          <Chats chats={messages} owner={owner} />
           <InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
         </>
       }
@@ -66,6 +67,7 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
   }
 
   const handleSendMessage = evt => {
+
     const message = {
       from,
       to: sendTo,

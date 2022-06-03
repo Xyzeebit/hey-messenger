@@ -21,15 +21,23 @@ import io from 'socket.io-client';
 // // const URL = 'api/socket'
 // let socket = io();
 // let callCount = 0;
+let msgCount = 0
 
 export default function Home({ userSession }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [appState, setAppState] = useContext(StateContext);
-  const { user, contacts, chats, newConversation } = state;
-  const [users, setUsers] = useState({});
-  const [messages, setMessages] = useState({});
+  const { contacts, newConversation } = state;
   const [newMessage, setMessage] = useState({});
   const router = useRouter();
+
+  const visibleHandler = evt => {
+    if(document.hidden) {
+      // document.title = 'Am Away(' + msgCount + ')'
+    } else {
+       msgCount = 0;
+       document.title = 'Hey! Messenger';
+    }
+  }
 
   useEffect(() => {
     setAppState({ ...appState, active: 'home' });
@@ -55,23 +63,29 @@ export default function Home({ userSession }) {
   }, []);
 
   useEffect(() => {
-    setMessages(chats);
-  }, [chats])
-
-  useEffect(() => {
     dispatch({ type: 'ADD_MESSAGE', message: newMessage, owner: appState.user.username });
+    // if(document.hidden) {
+    //   document.title = '(' + ++msgCount + ')New message | ' + document.title;
+    // }
   }, [newMessage._id]);
-
 
   useEffect(() => {
 
     if(appState.user.isLoggedIn) {
       useSocket(appState.user.username, ({ socketId, message}) => {
+        // console.log('receiving new message')
         setMessage(message);
       });
     }
 
+    return () => console.log('Unmounting...');
+
   }, [appState.user.isLoggedIn]);
+
+  useEffect(() => {
+    window.addEventListener('visibilitychange', visibleHandler);
+    return () => window.removeEventListener('visibilitychange', visibleHandler);
+  }, []);
 
   if(userSession.holdRendering && !appState.user.isLoggedIn) {
     return null;
@@ -108,7 +122,7 @@ export default function Home({ userSession }) {
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
     const user = req.session.user;
-    console.log('user session...', user)
+    // console.log('user session...', user)
     return {
       props: {
         userSession: { ...user, holdRendering: true }

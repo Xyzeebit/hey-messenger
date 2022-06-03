@@ -9,13 +9,38 @@ body {
   width: 100vw;
 }
 .main {
+  .chat__window {
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: flex-start;
+    // align-items: center;
+    padding: 0 1rem 0 1rem;
+    position: relative;
+  }
+  .chats__container {
+    // width: 100vw;
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 0;
+    height: 89%;
+    padding: 0 1rem 0 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    // position: relative;
+    // top: 75px;
+    // right: 0;
+    // left: 0;
+  }
 
   @media screen and (max-width: 768px) {
     overflow-x: hidden;
     overflow-y: visible;
     width: 100vw;
     height: 100vh;
-    position: relative;
+    // position: relative;
     // left: 0;
     // right: 0;
     // bottom: 0;
@@ -32,9 +57,7 @@ body {
 
     .contact__list {
       position: absolute;
-      // left: 0;
-      // right: 0;
-      // display: none;
+      height: 100vh;
     }
 
     &:hover {
@@ -43,15 +66,19 @@ body {
       // }
     }
     .chat__window {
-      position: relative;
-      // bottom: 0;
-      // top: 0;
+      position: fixed;
+      // left: 0;
+      bottom: 0;
+      top: 0;
+      // right: 0;
+      background: $white;
       -webkit-transition: all 500ms ease-in-out;
       transition: all 500ms ease-in-out;
       @media screen  and (max-width: 768px) {
+        height: 100vh;
         transform: translateX(100vw);
         .chats {
-          height: 100%;
+          // height: 100%;
         }
       }
       // display: none;

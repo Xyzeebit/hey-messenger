@@ -6,13 +6,28 @@ body {
   width: 100vw;
 }
 
+.main .chat__window {
+  padding: 0 1rem 0 1rem;
+  position: relative;
+}
+.main .chats__container {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 0;
+  height: 89%;
+  padding: 0 1rem 0 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 @media screen and (max-width: 768px) {
   .main {
     overflow-x: hidden;
     overflow-y: visible;
     width: 100vw;
     height: 100vh;
-    position: relative;
   }
 }
 @media screen and (max-width: 768px) {
@@ -25,19 +40,21 @@ body {
   }
   .main .contact__list {
     position: absolute;
+    height: 100vh;
   }
   .main .chat__window {
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    top: 0;
+    background: #fff;
     -webkit-transition: all 500ms ease-in-out;
     transition: all 500ms ease-in-out;
   }
 }
 @media screen and (max-width: 768px) and (max-width: 768px) {
   .main .chat__window {
+    height: 100vh;
     transform: translateX(100vw);
-  }
-  .main .chat__window .chats {
-    height: 100%;
   }
 }
 @media screen and (min-width: 769px) {

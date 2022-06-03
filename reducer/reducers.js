@@ -1,73 +1,8 @@
-// import io from 'socket.io-client';
-// const socket = io();
 import { socket } from '../lib/init-socket';
 import { nanoid } from 'nanoid';
 
 export const initialState = {
   contacts: [],
-  user: {
-    name: 'John Doe',
-    profilePhoto: '/avatar.png',
-    contacts: [
-      {
-        _id: 'ui3oiw7sn',
-        name: 'Amelia Nelson',
-        photo: '/avatar.png',
-        isOnline: true,
-        lastSentMessage: 'Hello, how are you?',
-        lastConversionTime: (new Date().getTime()),
-        notications: 16
-      },
-      {
-        _id: 'uio3iw7sn',
-        name: 'Jane Doe',
-        photo: '/avatar.png',
-        isOnline: false,
-        lastSentMessage: 'Hello, how are you?',
-        lastConversionTime: (new Date().getTime()),
-        notications: 1
-      },
-      {
-        _id: 'uidoiw7sn',
-        name: 'Nicolas Plum',
-        photo: '/avatar.png',
-        isOnline: true,
-        lastSentMessage: 'Hello, how are you?',
-        lastConversionTime: (new Date().getTime()),
-        notications: 7
-      },
-      {
-        _id: 'uioiw97sn',
-        name: 'Jessie Match',
-        photo: '/avatar.png',
-        isOnline: true,
-        lastSentMessage: 'Hello, how are you? I want to find out if you got my message',
-        lastConversionTime: (new Date().getTime()),
-        notications: 0
-      },
-      {
-        _id: 'uio09iw7sn',
-        name: 'Chies Lie',
-        photo: '/avatar.png',
-        isOnline: false,
-        lastSentMessage: 'Hello, how are you?',
-        lastConversionTime: (new Date().getTime()),
-        notications: 4
-      },
-      {
-        _id: 'y9899p0msi',
-        name: 'Bill Peters',
-        photo: '/avatar.png',
-        lastConversionTime: (new Date().getTime()),
-        lastSentMessage: 'Hello, how are you?',
-        isOnline: true,
-        notications: 4
-      }
-    ]
-  },
-  chats: {
-
-  },
   newConversation: {
     name: '',
     username: '',
@@ -75,7 +10,6 @@ export const initialState = {
     messages: [],
     showChatWindow: false
   },
-  active: 'home'
 };
 
 function contactsReducer(state, action) {
@@ -86,7 +20,7 @@ function contactsReducer(state, action) {
       if(found) {
         return state;
       }
-      // console.log(action.contact)
+
       return [...state, action.contact ];
     case 'GET_CONTACT':
       contact = state.find(c => c.username === action.username);
@@ -103,7 +37,7 @@ function contactsReducer(state, action) {
         time,
         chatId: action.chatId
       };
-      console.log('reducer socket id', socket.id);
+      // console.log('reducer socket id', socket.id);
       socket.emit('my-chat', newMsg);
       return state;
 
@@ -138,40 +72,6 @@ function contactsReducer(state, action) {
   }
 }
 
-// function chatReducer(state, action) {
-  // switch (action.type) {
-  //   case 'SEND_MESSAGE':
-  //     let time = new Date().getTime();
-  //     const newMsg = {
-  //       _id: time,
-  //       from: action.message.from,
-  //       to: action.message.to,
-  //       text: action.message.text,
-  //       time,
-  //       chatId: action.chatId
-  //     }
-  //     console.log('reducer socket id', socket.id);
-  //     socket.emit(socket.id, newMsg);
-  //
-  //     return state;
-  //
-  //   case 'ADD_MESSAGE':
-  //   // console.log('adding message before state', state)
-  //     if(state[action.chatId]) {
-  //       // console.log('about to add message...')
-  //       state[action.chatId].messages.push(action.message);
-  //       // console.log('message added: ', state[action.chatId].messages)
-  //     }
-  //     // console.log('message added: ', state)
-  //     return state;
-  //   case 'UPDATE_CHATS':
-  //     state[action.chatId] = action.messages;
-  //     return state;
-  //
-  //   default: return state;
-  // }
-// }
-
 function userReducer(state, action) {
   switch (action.type) {
     case 'USER':
@@ -194,22 +94,11 @@ function newConversationReducer(state, action) {
   }
 }
 
-function activeLinkReducer(state, action) {
-  switch (action.type) {
-    case 'SELECTED':
-      return action.selected
-    default: return state;
-
-  }
-}
-
 
 export function appReducer(state, action) {
   return {
     user: userReducer(state.user, action),
-    // chats: chatReducer(state.chats, action),
     newConversation: newConversationReducer(state.newConversation, action),
-    active: activeLinkReducer(state.active, action),
     contacts: contactsReducer(state.contacts, action)
   }
 }

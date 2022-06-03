@@ -71,20 +71,6 @@ function Form({ showUsername, showName, showPassword, showCPassword, onSubmit })
       className="form_group"
       onSubmit={handleInputSubmit}
     >
-      {showUsername && <div className="form_input__group">
-        <label htmlFor="username">
-          <span>Username*</span>
-          {data.usernameErr &&
-            <small className="username_err error">{data.usernameErrText}</small>}
-        </label>
-        <input
-          type="text"
-          value={data.username}
-          onChange={({ target}) => setData({...data, username: target.value})}
-          id="username"
-          className={`${data.usernameErr ? 'form_err' : ''}`}
-        />
-      </div>}
 
       {showName && <div className="form_input__group">
         <label htmlFor="name">
@@ -98,6 +84,21 @@ function Form({ showUsername, showName, showPassword, showCPassword, onSubmit })
           onChange={({ target}) => setData({...data, name: target.value})}
           id="name"
           className={`${data.nameErr ? 'form_err' : ''}`}
+        />
+      </div>}
+
+      {showUsername && <div className="form_input__group">
+        <label htmlFor="username">
+          <span>Username*</span>
+          {data.usernameErr &&
+            <small className="username_err error">{data.usernameErrText}</small>}
+        </label>
+        <input
+          type="text"
+          value={data.username}
+          onChange={({ target}) => setData({...data, username: target.value})}
+          id="username"
+          className={`${data.usernameErr ? 'form_err' : ''}`}
         />
       </div>}
 

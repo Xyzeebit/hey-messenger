@@ -6,17 +6,19 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
   const { name, chatId, username, id, profilePhoto, messages, showChatWindow } = contact;
   const contactMessages = messages[chatId];
 
-  // console.log(messages)
+
   return (
     <div className="chat__window"
-      style={{transform: `translateX(${showChatWindow ? 0 : '100vw'})`}}
+      style={{transform: `translateX(${showChatWindow ? 0 : '110vw'})`}}
     >
       { id &&
         <>
           <ChatBar name={name} photo={profilePhoto}
             showChatWindow={showChatWindow} dispatch={dispatch} />
-          <Chats chats={messages} owner={owner} />
-          <InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
+          <div className="chats__container">
+            {<Chats chats={messages} owner={owner} />}
+            <InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
+          </div>
         </>
       }
     </div>
@@ -132,24 +134,27 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
 
 const Chats = ({ chats, owner }) => {
   chatRef = useRef();
+  console.log(chats)
   return (
     <div className="chats" ref={chatRef}>
       {chats.length > 0 && chats.map(chat => {
-        return <Message key={chat._id} message={chat.text}
+        return <Message key={chat._id} message={chat.text} time={chat.time}
         sender={chat.from} owner={owner}/>
       })}
     </div>
   );
 }
 
-function Message({ message, sender, owner }) {
+function Message({ message, time, sender, owner }) {
   return (
     <div className="message">
-      <ChatBubble message={message} self={sender === owner} />
+      <ChatBubble message={message} time={time} self={sender === owner} />
+
     </div>
   );
 }
 
 function ChatBubble({ message, self }) {
-  return <span className={`bubble ${self ? 'in' : 'out'}`}>{message}</span>
+  return <span className={`bubble ${self ? 'in' : 'out'}`}>{message}
+  <span className="message__time">{time}</span></span>
 }

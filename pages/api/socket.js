@@ -1,9 +1,15 @@
+import { EventEmitter } from 'events';
 import { Server } from 'socket.io';
 import User from '../../models/userSchema';
 import Message from '../../models/messagesSchema';
 import dbConnect from '../../lib/dbConnect';
+// import { PeerServer } from 'peer';
+
+// const emitter = new EventEmitter();
+// emitter.setMaxListeners(100);
 
 let io;
+var peerServer;
 
 export default async function handler(req, res) {
 
@@ -13,6 +19,8 @@ export default async function handler(req, res) {
   let user;
   const rooms = [];
   const onlineUsers = [];
+
+  // peerServer = PeerServer(Server, { debug: true })
 
   if(username) {
     user = await User.findOne({ username }).select('contacts');
@@ -40,23 +48,29 @@ export default async function handler(req, res) {
 
 let counter = 0;
 function communicator(io, rooms) {
+
   // if(counter < 1) {
     io.on('connection', socket => {
-      // console.log(socket.id, ' connecting for the ' + counter + ' time');
-      // console.log('counter', counter++);
 
       for (let room of rooms) {
         socket.join(room);
       }
 
+      socket.on('is online', username => {
+        socket.broadcast.emit('is online', username);
+      });
+
       socket.on('my-chat', msg => {
         io.to(msg.chatId).emit('my-chat', msg)
+        // console.log('writing message to db', msg);
       });
-      
+
     });
 
     io.on('disconnect', socket =>  {
       console.log('disconnected');
-    })
-  // }
+      socket.disconnect();
+      socket.removeAllListener('my-chat');
+      socket = null;
+    });
 }

@@ -16,6 +16,7 @@ export default async function handler(req, res) {
       .populate('messages', 'messages chatId')
       .exec();
     if(user) {
+      console.log(slug, ' has chat id of ' + user.messages.chatId)
       const notifications = getNotifications(user.messages);
       const lastSent = getLastSent(user.messages);
       const _user = {

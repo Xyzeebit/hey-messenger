@@ -77,27 +77,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  .go__back {
-    background: none;
-    outline: none;
-    border: none;
-    transition: all 300ms forward;
-    border-radius: 100px;
-    padding: 0.4rem;
-    @include tablet {
-      display: none;
-    }
-    &:active {
-      background: $gray;
-      .icon__back {
-        transform: scale(0.6) rotate(180deg);
-      }
-    }
-  }
-  .icon__back {
-    transform: scale(0.9) rotate(180deg);
-    filter: invert(100%);
-  }
+
   .profile__photo {
     width: 40px;
     height: 40px;
@@ -112,6 +92,11 @@
   }
 }
 
+.chat__bar--right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .input__bar {
   position: absolute;
   bottom: 0;
@@ -189,4 +174,35 @@
       }
     }
   }
+}
+
+.bar__button {
+  background: none;
+  outline: none;
+  border: none;
+  transition: all 300ms forward;
+  border-radius: 100px;
+  padding: 0.4rem;
+  @include tablet {
+    display: none;
+  }
+  &:active {
+    background: $gray;
+    .icon__back {
+      transform: scale(0.6) rotate(180deg);
+    }
+  }
+}
+.bar__icon {
+  filter: invert(100%) brightness(1.5);
+}
+.icon__back {
+  transform: scale(0.9) rotate(180deg);
+}
+
+.icon__call {
+  transform: rotateX(180deg);
+}
+.icon-video {
+  transform: rotateX(180deg);
 }

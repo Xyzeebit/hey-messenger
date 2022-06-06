@@ -20,14 +20,14 @@ function contactsReducer(state, action) {
       if(found) {
         return state;
       }
-
+      // console.log(action.contact)
       return [...state, action.contact ];
     case 'GET_CONTACT':
       contact = state.find(c => c.username === action.username);
       return contact;
 
     case 'SEND_MESSAGE':
-      // contact = state.find(c => c.username === action.username);
+
       let time = new Date().getTime();
       const newMsg = {
         _id: nanoid(20),
@@ -35,9 +35,10 @@ function contactsReducer(state, action) {
         to: action.message.to,
         text: action.message.text,
         time,
-        chatId: action.chatId
+        chatId: action.chatId,
+        read: false
       };
-      // console.log('reducer socket id', socket.id);
+      // console.log('sending message to ', socket.id);
       socket.emit('my-chat', newMsg);
       return state;
 
@@ -50,12 +51,18 @@ function contactsReducer(state, action) {
           if(contact) {
             index = state.indexOf(contact);
             contact.messages.messages.push(action.message);
+            contact.lastSent = action.message.text;
             state[index] = contact;
           }
           if(sender) {
-            index = state.indexOf(sender);
+            // index = state.indexOf(sender);
             sender.messages.messages.push(action.message);
-            state[index] = sender;
+            if(action.isOpen) {
+              sender.notifications = 0
+            } else {
+              sender.notifications++;
+            }
+            // state[index] = sender;
           }
         }
       }
@@ -67,6 +74,21 @@ function contactsReducer(state, action) {
       state[action.chatId] = action.messages;
       return state;
 
+    case 'CLEAR_NOTIFICATIONS':
+      contact = state.find(c => c.username === action.username);
+      if(contact) {
+        contact.notifications = 0;
+      }
+      return state;
+
+    case 'USERS_ONLINE':
+      if(action.username) {
+        contact = state.find(u => u.username === action.username);
+        if(contact) {
+          contact.isOnline = true;
+        }
+      }
+      return state;
 
     default: return state;
   }

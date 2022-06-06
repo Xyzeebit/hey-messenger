@@ -32,13 +32,13 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
   return (
     <div className="chat__bar">
       <div className="chat__bar--left">
-        <button className="go__back" onClick={handleCloseChat}>
+        <button className="go__back bar__button" onClick={handleCloseChat}>
           <img
             src="/right-arrow.svg"
             alt="go back"
             width="30"
             height="30"
-            className="icon__back"
+            className="icon__back bar__icon"
           />
         </button>
 
@@ -52,7 +52,26 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
         <span>{name}</span>
       </div>
 
-      <div className="chat__bar--right"></div>
+      <div className="chat__bar--right">
+        <button className="bar__button" onClick={handleCloseChat}>
+          <img
+            src="/icon-call.svg"
+            alt="go back"
+            width="30"
+            height="30"
+            className="bar__icon icon__call"
+          />
+        </button>
+        <button className="bar__button" onClick={handleCloseChat}>
+          <img
+            src="/icon-video.svg"
+            alt="go back"
+            width="30"
+            height="30"
+            className="bar__icon icon__video"
+          />
+        </button>
+      </div>
     </div>
   );
 }
@@ -79,8 +98,6 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
     }
     dispatch({ type: 'SEND_MESSAGE', message, chatId });
     inputRef.current.style.height = '1px';
-    // emit to chatId
-    // socket.emit('my-chat', message);
 
     setChatInputValue('');
 
@@ -134,7 +151,6 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
 
 const Chats = ({ chats, owner }) => {
   chatRef = useRef();
-  console.log(chats)
   return (
     <div className="chats" ref={chatRef}>
       {chats.length > 0 && chats.map(chat => {
@@ -146,15 +162,15 @@ const Chats = ({ chats, owner }) => {
 }
 
 function Message({ message, time, sender, owner }) {
+  const sent = new Date(time).toLocaleString('en-US', {hour: 'numeric', minute: 'numeric'});
   return (
     <div className="message">
-      <ChatBubble message={message} time={time} self={sender === owner} />
-
+      <ChatBubble message={message} time={sent} self={sender === owner} />
     </div>
   );
 }
 
-function ChatBubble({ message, self }) {
+function ChatBubble({ message, time, self }) {
   return <span className={`bubble ${self ? 'in' : 'out'}`}>{message}
   <span className="message__time">{time}</span></span>
 }

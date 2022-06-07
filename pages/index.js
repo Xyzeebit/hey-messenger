@@ -81,9 +81,9 @@ export default function Home({ userSession }) {
         owner: appState.user.username, isOpen: newConversation.showChatWindow });
         setOldMsgId(mid);
         // write to db if sender is owner
-        if(newConversation.showChatWindow) {
-          writeMessage(newConversation.username, message, data => {
-            console.log('writing message status', data)
+        if(newConversation.username === message.from) {
+          writeMessage(newConversation.username, message, resp => {
+            console.log('writing message status', resp)
           });
         }
     }

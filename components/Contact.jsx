@@ -2,18 +2,20 @@ import CircleImage from './CircleImage';
 import { useState, useReducer, useEffect, useContext } from 'react';
 import StateContext from './StateContext';
 import { fetchContacts } from '../lib/fetchUser';
+import { readMessages } from '../lib/read-messages';
 
 export function Contact({ id, name, username, profilePhoto,
         lastSeen, lastSent, isOnline,
-        notifications, messages, dispatch }) {
+        notifications, chatId, messages, dispatch }) {
 
   const [h,m] = new Date(lastSeen).toTimeString().split(':');
   const handleStartChat = () => {
-    // console.log('starting conversation', messages, 'with ' + username)
-    const chatId = messages.chatId;
-    dispatch({ type: 'START_CHAT',
-      contact: { name, chatId, username, id, profilePhoto,
-        messages: messages.messages }, showChatWindow: true });
+
+    dispatch({
+      type: 'START_CHAT',
+      contact: { name, chatId, username, id, profilePhoto, messages },
+      showChatWindow: true
+    });
     dispatch({ type: 'CLEAR_NOTIFICATIONS', username });
   }
 
@@ -48,6 +50,18 @@ export const ContactList = ({ contacts, dispatch }) => {
       }
     }
   }, [appState.user.contacts]);
+
+  useEffect(() => {
+    if(appState.user.isLoggedIn) {
+      if(appState.user.contacts) {
+        const chatIds = appState.user.contacts.map(c => c.chatId);
+        readMessages(chatIds, messages => {
+          // console.log(messages);
+          dispatch({ type: 'DB_MESSAGES', contacts: appState.user.contacts, messages });
+        });
+      }
+    }
+  }, [appState.user.contacts])
 
   // console.log('finding user contacts', contacts);
 

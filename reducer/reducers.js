@@ -49,14 +49,14 @@ function contactsReducer(state, action) {
           let sender = state.find(c => c.username === action.message.from);
 
           if(contact) {
-            index = state.indexOf(contact);
-            contact.messages.messages.push(action.message);
+            // index = state.indexOf(contact);
+            contact.messages.push(action.message);
             contact.lastSent = action.message.text;
-            state[index] = contact;
+            // state[index] = contact;
           }
           if(sender) {
             // index = state.indexOf(sender);
-            sender.messages.messages.push(action.message);
+            sender.messages.push(action.message);
             if(action.isOpen) {
               sender.notifications = 0
             } else {
@@ -88,6 +88,29 @@ function contactsReducer(state, action) {
           contact.isOnline = true;
         }
       }
+      return state;
+
+    case 'DB_MESSAGES':
+      for(let ct of action.contacts) {
+        contact = state.find(c => c.username === ct.contactUsername);
+        if(contact && !contact.messages) {
+          contact.messages = action.messages[ct.chatId].messages;
+          contact.chatId = ct.chatId;
+
+          let lastMsg = '';
+          let msgs = action.messages[ct.chatId].messages;
+
+          for(let i = msgs.length - 1; i > 0; i--) {
+            if(msgs[i].from === contact.username) {
+              lastMsg = msgs[i].text;
+              break;
+            }
+          }
+          contact.lastSent = lastMsg;
+          // console.log(contact)
+        }
+      }
+
       return state;
 
     default: return state;

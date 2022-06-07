@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
   if(path === 'follow') {
     const { username, userToFollow } = req.body;
-    console.log(username, userToFollow)
+    // console.log(username, userToFollow)
     const user = await User.findOne({ username });
     if(user) { // username is contacts
       const shouldFollow = await User.findOne({ username: userToFollow });

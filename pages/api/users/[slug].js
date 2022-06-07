@@ -12,23 +12,23 @@ export default async function handler(req, res) {
 
   if(minimal) {
     // console.log('minimal')
-    const user = await User.findOne({ username: slug })
-      .populate('messages', 'messages chatId')
-      .exec();
+    const user = await User.findOne({ username: slug });
+      // .populate('messages', 'messages chatId')
+      // .exec();
     if(user) {
-      console.log(slug, ' has chat id of ' + user.messages.chatId)
-      const notifications = getNotifications(user.messages);
-      const lastSent = getLastSent(user.messages);
+
+      // console.log(slug, ' has chat id of ' + user.messages.chatId)
+      // const notifications = getNotifications(user.messages);
+      // const lastSent = getLastSent(user.messages);
       const _user = {
         id: user._id,
         name: user.name,
         username: user.username,
         profilePhoto: user.profilePhoto,
         lastSeen: user.lastSeen,
-        lastSent,
-        isOnline: user.isOnline,
-        messages: user.messages,
-        notifications,
+        lastSent: '',
+        isOnline: false,
+        notifications: 0,
       }
       res.json(_user);
     } else {

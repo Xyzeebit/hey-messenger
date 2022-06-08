@@ -4,16 +4,17 @@ import User from '../../models/userSchema';
 import Message from '../../models/messagesSchema';
 import dbConnect from '../../lib/dbConnect';
 // import { PeerServer } from 'peer';
+// import { Peer } from 'peerjs';
 
 // const emitter = new EventEmitter();
 // emitter.setMaxListeners(100);
 
 let io;
-var peerServer;
 
 export default async function handler(req, res) {
 
   dbConnect();
+
 
   const { username } = req.query;
   let user;

@@ -101,7 +101,7 @@ function contactsReducer(state, action) {
           let msgs = action.messages[ct.chatId].messages;
 
           for(let i = msgs.length - 1; i > 0; i--) {
-            if(msgs[i].from === contact.username) {
+            if(msgs[i].from !== contact.username) {
               lastMsg = msgs[i].text;
               break;
             }

@@ -12,7 +12,7 @@ export default function Logout() {
     if(isLoggedIn) {
       // shuld throw err
     } else {
-      setAppState({ ...appState, user: { isLoggedIn }, redirectToFollow: { follow: '' } });
+      setAppState({ ...appState, user: { isLoggedIn }, redirectToFollow: { follow: '' }, active: 'home' });
       // localStorage.removeItem('hey_messenger')
       const localSession = JSON.parse(localStorage.getItem('hey_messenger'));
       localSession.isLoggedIn = false;

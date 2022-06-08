@@ -13,6 +13,7 @@ import ChatWindow from '../components/ChatWindow';
 import { appReducer, initialState } from '../reducer/reducers';
 import StateContext from '../components/StateContext';
 import io from 'socket.io-client';
+// import { Peer } from 'peerjs';
 
 
 // const connectToSocket = async (username) => {
@@ -75,13 +76,12 @@ export default function Home({ userSession }) {
 
   useEffect(() => {
     const { mid, message } = newMessage;
-    console.log('dispatching id: ' + mid, 'old id ' + oldMsgId + ' message ' + message.text);
     if(mid !== oldMsgId) {
       dispatch({ type: 'ADD_MESSAGE', message,
         owner: appState.user.username, isOpen: newConversation.showChatWindow });
         setOldMsgId(mid);
         // write to db if sender is owner
-        if(newConversation.username === message.from) {
+        if(appState.user.username === message.from) {
           writeMessage(newConversation.username, message, resp => {
             console.log('writing message status', resp)
           });
@@ -106,11 +106,20 @@ export default function Home({ userSession }) {
     return () => window.removeEventListener('visibilitychange', visibleHandler);
   }, []);
 
-  // useEffect(() => {
-  //   if(usersOnline) {
-  //
-  //   }
-  // }, [usersOnline]);
+  useEffect(() => {
+    // import('peerjs').then(({ default: Peer }) => {
+    //   const peer = new Peer();
+    //   peer.on('connection', (conn) => {
+    //     conn.on('data', data => {
+    //       console.log(data)
+    //     });
+    //     conn.on('open', () => {
+    //       conn.send('hello');
+    //     })
+    //   })
+    // })
+
+  }, []);
 
   if(userSession.holdRendering && !appState.user.isLoggedIn) {
     return null;

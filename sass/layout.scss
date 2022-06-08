@@ -35,7 +35,7 @@ body {
     // left: 0;
   }
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 801px) {
     overflow-x: hidden;
     overflow-y: visible;
     width: 100vw;
@@ -47,7 +47,7 @@ body {
     // top: 0;
   }
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 801px) {
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -91,7 +91,7 @@ body {
 
   }
 
-  @media screen and (min-width: 769px) {
+  @media screen and (min-width: 801px) {
     display: flex;
     justify-content: space-around;
     align-items: center;

@@ -1,10 +1,8 @@
 import Link from 'next/link';
-import { useContext } from 'react';
-import StateContext from '../components/StateContext';
+import { useRouter } from 'next/router';
 
 export default function NavBar() {
-  const [appState] = useContext(StateContext);
-  const { active } = appState;
+  const router = useRouter();
   return (
     <nav className="navbar">
       <div className="navbar__brand">
@@ -22,13 +20,13 @@ export default function NavBar() {
       <div className="menu">
         <Link href="/profile">
           <a className={`menu__item profile__button
-            ${active === 'profile' ? 'active' : ''}`}>Profile</a>
+            ${router.asPath === '/profile' ? 'active' : ''}`}>Profile</a>
         </Link>
         {/*<button className="menu__item sign-in__button">Sign in</button>
         <button className="menu__item sign-up__button">Sign up</button>*/}
         <Link href="/">
           <a className={`menu__item chats__button
-            ${active === 'home' ? 'active' : ''}`}>Chats</a>
+            ${router.asPath === '/' ? 'active' : ''}`}>Chats</a>
         </Link>
       </div>
     </nav>

@@ -108,7 +108,7 @@ export default function Profile({ holdRendering }) {
       if(localSession.isLoggedIn) {
         fetchUser(localSession.username, false, user => {
           if(user) {
-            console.log('fetched user', user)
+            // console.log('fetched user', user)
             setAppState({ ...appState, user, active: 'profile' });
           }
         });
@@ -147,7 +147,7 @@ export default function Profile({ holdRendering }) {
               onEdit={handleInputChange} visible={data.edit} />
             <ProfileDetail label="name" value={appState.user.name}
               onEdit={handleInputChange} visible={data.edit} />
-            <ProfileDetail label="email" value={appState.user.email}
+            <ProfileDetail label="email" value={appState.user.email || 'email'}
               onEdit={handleInputChange} visible={data.edit} />
 
             <InviteFriend
@@ -180,7 +180,7 @@ export default function Profile({ holdRendering }) {
               </button>
             </div>
 
-            <div>
+            <div className="logout-container">
               <Link href="/logout">
                 <a className="logout_button">Log out</a>
               </Link>

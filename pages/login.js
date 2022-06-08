@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useContext } from 'react';
-import { LoginForm, Alert } from '../components/form-components';
+import { LoginForm, Alert, Spinner } from '../components/form-components';
 import StateContext from '../components/StateContext';
 
 export default function Login() {
@@ -9,7 +9,8 @@ export default function Login() {
   const [data, setData] = useState({
     username: '',
     pwd: '',
-    loginError: false
+    loginError: false,
+    loading: false
   });
   const router = useRouter();
 
@@ -72,7 +73,7 @@ export default function Login() {
   useEffect(() => {
     if(router.asPath.indexOf('?') !== -1) {
       const [path, follow] = router.asPath.split('?');
-      console.log(path, follow)
+      // console.log(path, follow)
       setAppState({ ...appState, redirectToFollow: { follow }})
     }
   }, [])
@@ -80,6 +81,7 @@ export default function Login() {
   useEffect(() => {
     if(data.username && data.pwd) {
       loginUser();
+      setData({ ...data, loading: true });
     }
   }, [data.username, data.pwd]);
 
@@ -88,6 +90,7 @@ export default function Login() {
       <Head>
         <title>Login</title>
       </Head>
+      {data.loading && <Spinner />}
       <div className="login_app__title"><em>Hey!</em> Messenger</div>
       <div className="login_container">
         <h2>Login</h2>

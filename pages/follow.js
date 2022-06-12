@@ -10,17 +10,17 @@ export default function FunctionalPage() {
   const [userInfo, setUserInfo] = useState({ added: false });
 
   const handleClick = type => {
-    const paths = location.href.split('/');
-    const uLink = paths[paths.length - 1];
-    // console.log(path, uid)
+
+    let indexOfQ = location.href.indexOf('?');
+    let uLink = '';
+    if(indexOfQ > -1) {
+      uLink = router.asPath.split('=')[1];
+    }
     if(type === 'add') {
-      // is logged in
-      // find and add user with uid to user
-      // don't add user is already added
+
       if(userInfo.isLoggedIn) {
         // call api route to add user then redirect to home
         addUser(userInfo.currentUser, userInfo.username, response => {
-          console.log('adding user to contacts', response)
           if(response.successful) {
             setUserInfo({ ...userInfo, added: true })
             setTimeout(() => {
@@ -40,7 +40,7 @@ export default function FunctionalPage() {
   }
 
   async function addUser(username, userToFollow, cb) {
-    const URL = `http://localhost:3000/api/users/follow/${userToFollow}`;
+    const URL = 'api/users/follow';
     const resp = await fetch(URL, {
       method: 'POST',
       headers: {
@@ -55,12 +55,10 @@ export default function FunctionalPage() {
   }
 
   async function getUserWithLink(uLink) {
-    // const [a, path, uid] = router.asPath.split('/');
 
-    const URL = `http://localhost:3000/api/users/findbylink/${uLink}`;
+    const URL = `api/users/findbylink?link=${uLink}`;
     const resp = await fetch(URL);
     const user = await resp.json();
-
     if(resp.ok && user) {
 
       if(user.successful) {
@@ -82,8 +80,15 @@ export default function FunctionalPage() {
   }
 
   useEffect(() => {
-    const paths = location.href.split('/');
-    const uLink = paths[paths.length - 1];
+    let indexOfQ = location.href.indexOf('?');
+    let uLink;
+    if(indexOfQ > -1) {
+      uLink = router.asPath.split('=')[1];
+    } else {
+      router.push('/');
+    }
+    // const paths = location.href.split('/');
+    // const uLink = paths[paths.length - 1];
     // console.log(paths)
     if(localStorage.getItem('hey_messenger')) {
       const localSession = JSON.parse(localStorage.getItem('hey_messenger'));
@@ -145,7 +150,7 @@ const UserDetails = ({ userInfo }) => {
 }
 
 const UserActions = ({ isLoggedIn, onEvent }) => {
-  
+
   return (
     <div className="user_actions">
       {

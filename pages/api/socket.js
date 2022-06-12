@@ -1,27 +1,37 @@
-import { EventEmitter } from 'events';
-import { Server } from 'socket.io';
+// import { EventEmitter } from 'events';
+// import { Server } from 'socket.io';
 import User from '../../models/userSchema';
 import Message from '../../models/messagesSchema';
 import dbConnect from '../../lib/dbConnect';
 // import { PeerServer } from 'peer';
 // import { Peer } from 'peerjs';
+// const io = require('../../server');
 
 // const emitter = new EventEmitter();
 // emitter.setMaxListeners(100);
 
-let io;
+// let io;
 
 export default async function handler(req, res) {
 
   dbConnect();
 
+  // console.log('calling socket', req.io);
 
   const { username } = req.query;
   let user;
   const rooms = [];
   const onlineUsers = [];
 
+  // const peerServer = PeerServer({ port: 3001, path: '/hey'});
+
   // peerServer = PeerServer(Server, { debug: true })
+
+  // const peer = new Peer('video-call');
+  // conn.on('open', () => {
+  //   conn.send('hi!');
+  // })
+
 
   if(username) {
     user = await User.findOne({ username }).select('contacts');
@@ -34,15 +44,16 @@ export default async function handler(req, res) {
 
   }
 
-  if(res.socket.server.io) {
+
+  if(req.io) {
     console.log('Socket is already running');
+    communicator(req.io, rooms);
   } else {
-    console.log('Socket is initializing');
-    io = new Server(res.socket.server);
-    res.socket.server.io = io;
+    // console.log('Socket is initializing');
+    // io = new Server(res.socket.server);
+    // req.io = io;
   }
 
-  communicator(res.socket.server.io, rooms);
 
   res.end();
 }
@@ -50,26 +61,17 @@ export default async function handler(req, res) {
 let counter = 0;
 function communicator(io, rooms) {
 
-  // if(counter < 1) {
     io.on('connection', socket => {
+      console.log('server connected...')
 
       for (let room of rooms) {
         socket.join(room);
       }
 
-      socket.on('is online', username => {
-        socket.broadcast.emit('is online', username);
-      });
-
-      socket.on('my-chat', msg => {
-        io.to(msg.chatId).emit('my-chat', msg)
-        // console.log('writing message to db', msg);
-      });
-
     });
 
     io.on('disconnect', socket =>  {
-      console.log('disconnected');
+      console.log('server disconnected');
       socket.disconnect();
       socket.removeAllListener('my-chat');
       socket = null;

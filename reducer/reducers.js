@@ -39,6 +39,9 @@ function contactsReducer(state, action) {
         read: false
       };
       // console.log('sending message to ', socket.id);
+      if(socket.connected) {
+        console.log('reducer connected');
+      }
       socket.emit('my-chat', newMsg);
       return state;
 

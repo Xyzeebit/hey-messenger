@@ -23,6 +23,7 @@ export default function Profile({ holdRendering }) {
     editName: '',
     editUsername: '',
     editEmail: '',
+    editPhoto: {}
   });
   const [copyText, setCopyText] = useState('copy');
 
@@ -90,6 +91,7 @@ export default function Profile({ holdRendering }) {
       });
       console.log('data....', data)
       // write to server in useEffect
+      updateUserData();
     }
     if(command === 'cancel') {
       setData({
@@ -119,7 +121,36 @@ export default function Profile({ holdRendering }) {
       router.push('/signup');
     }
 
-  }, [])
+  }, []);
+
+  const handleFileChange = evt => {
+    let file = evt.target.files;
+    if(file) {
+      console.log(file);
+      setData({ ...data, editPhoto: file[0] });
+    }
+  }
+
+  const updateUserData = async () => {
+    const formData = new FormData();
+    formData.append('photo', data.editPhoto);
+
+    const resp = await fetch('api/users/update', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify(data.editPhoto)
+    });
+    const userUpdated = await resp.json();
+    if(userUpdated) {
+
+    }
+  }
+
+  // useEffect(() => {
+  //
+  // }, []);
 
 
   if(holdRendering && !appState.user.isLoggedIn) {
@@ -135,11 +166,26 @@ export default function Profile({ holdRendering }) {
 
           <div className="profile_page">
             <div className="profile_image__container">
-              <img
+              {!data.edit ? <img
                 src={`/${appState.user.profilePhoto}`}
                 alt="Avatar"
-                width="50"
-                height="50"
+                width="150"
+                height="150"
+              /> :
+              <label htmlFor="photo-upload">
+                <img
+                  src="/icon-camera-plus.svg"
+                  alt="upload photo"
+                  width="100"
+                  height="100"
+                />
+              </label>}
+              <input
+                id="photo-upload"
+                type="file"
+                style={{ display: 'none' }}
+                accept="image/png, image/jpeg"
+                onChange={handleFileChange}
               />
             </div>
 
@@ -152,7 +198,7 @@ export default function Profile({ holdRendering }) {
 
             <InviteFriend
               link={location.href.substring(0, location.href.lastIndexOf('/')) +
-              '/follow/' + appState.user.link}
+              '/follow?link=' + appState.user.link}
               copyText={copyText} onClick={copyLink}
             />
 

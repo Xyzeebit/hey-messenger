@@ -3,7 +3,7 @@ import { sessionOptions } from "../lib/session";
 import { useReducer, useEffect, useLayoutEffect, useState, useContext } from 'react';
 import Head from 'next/head'
 import { useRouter } from 'next/router';
-import { useSocket } from '../lib/init-socket';
+import { useSocket, socket } from '../lib/init-socket';
 import { fetchUser, fetchContacts } from '../lib/fetchUser';
 import { writeMessage } from '../lib/write-message';
 
@@ -12,17 +12,9 @@ import { ContactList } from '../components/Contact';
 import ChatWindow from '../components/ChatWindow';
 import { appReducer, initialState } from '../reducer/reducers';
 import StateContext from '../components/StateContext';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 // import { Peer } from 'peerjs';
 
-
-// const connectToSocket = async (username) => {
-//   await fetch('/api/socket?username=' + username);
-// }
-
-// // const URL = 'api/socket'
-// let socket = io();
-// let callCount = 0;
 let msgCount = 0
 
 export default function Home({ userSession }) {
@@ -83,7 +75,7 @@ export default function Home({ userSession }) {
         // write to db if sender is owner
         if(appState.user.username === message.from) {
           writeMessage(newConversation.username, message, resp => {
-            console.log('writing message status', resp)
+            // console.log('writing message status', resp)
           });
         }
     }
@@ -97,7 +89,10 @@ export default function Home({ userSession }) {
       });
     }
 
-    return () => console.log('Unmounting...');
+    return () => {
+      socket.disconnect();
+      console.log('Unmounting...');
+    };
 
   }, [appState.user.isLoggedIn]);
 
@@ -106,20 +101,33 @@ export default function Home({ userSession }) {
     return () => window.removeEventListener('visibilitychange', visibleHandler);
   }, []);
 
-  useEffect(() => {
-    // import('peerjs').then(({ default: Peer }) => {
-    //   const peer = new Peer();
-    //   peer.on('connection', (conn) => {
-    //     conn.on('data', data => {
-    //       console.log(data)
-    //     });
-    //     conn.on('open', () => {
-    //       conn.send('hello');
-    //     })
-    //   })
-    // })
-
-  }, []);
+  // useEffect(() => {
+  //   import('peerjs').then(({ default: Peer }) => {
+  //     const peer = new Peer(appState.user._id, {
+  //       path: '/hey',
+  //       host: 'localhost',
+  //       port: 3001
+  //     });
+  //     console.log(contacts)
+  //     if(appState.user.contacts) {
+  //       for(let contact of appState.user.contacts) {
+  //         peer.connect(contact._id);
+  //       }
+  //     }
+  //     // peer.connect('jessie/')
+  //     // console.log("peer id", peer);
+  //     peer.on('connection', (conn) => {
+  //       console.log('peer connected');
+  //       conn.on('data', data => {
+  //         console.log('peer data', data)
+  //       });
+  //       conn.on('open', () => {
+  //         conn.send('hello from peer');
+  //       })
+  //     })
+  //   })
+  //
+  // }, [appState.user.isLoggedIn]);
 
   if(userSession.holdRendering && !appState.user.isLoggedIn) {
     return null;

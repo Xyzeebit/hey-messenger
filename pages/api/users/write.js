@@ -7,7 +7,6 @@ export default async function handler(req, res) {
   dbConnect();
 
   const message = req.body;
-  console.log('writing to...', message.chatId)
 
   const messages = await Messages.findOne({ chatId: message.chatId }).select('messages').exec();
   if(messages) {

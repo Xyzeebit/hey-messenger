@@ -35,7 +35,7 @@ export default function Login() {
     const user = await resp.json();
 
     setAppState({ ...appState, user });
-    setData({ ...data, loginError: !user.isLoggedIn });
+    setData({ ...data, loginError: !user.isLoggedIn, loading: false });
 
     if(user.isLoggedIn) {
       localStorage.setItem('hey_messenger', JSON.stringify({
@@ -59,7 +59,7 @@ export default function Login() {
     if(appState.user.isLoggedIn) {
       if(appState.redirectToFollow.follow &&
         appState.redirectToFollow.follow !== appState.user.link) {
-        router.push('/follow/' + appState.redirectToFollow.follow);
+        router.push('/follow?link=' + appState.redirectToFollow.follow);
       } else {
          router.push('/');
       }
@@ -89,6 +89,7 @@ export default function Login() {
     <main className="login_main">
       <Head>
         <title>Login</title>
+        <link href="/favicon.png" rel='icon' />
       </Head>
       {data.loading && <Spinner />}
       <div className="login_app__title"><em>Hey!</em> Messenger</div>
@@ -103,7 +104,7 @@ export default function Login() {
           width="50"
           height="50"
         />
-        <LoginForm formHandler={handleFormSubmit} />
+        <LoginForm loading={data.loading} formHandler={handleFormSubmit} />
         <div className="dont_have__account">
           Don't have account? <a href="/signup">signup</a> instead.
         </div>

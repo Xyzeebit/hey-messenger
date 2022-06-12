@@ -1,14 +1,14 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useContext } from 'react';
-import { SignupForm, Alert } from '../components/form-components';
+import { SignupForm, Alert, Spinner } from '../components/form-components';
 import StateContext from '../components/StateContext';
 
 export default function Login() {
   const router = useRouter();
   const [appState, setAppState] = useContext(StateContext);
   const [data, setData] = useState({ username: '',
-    name: '', pwd: '', signupError: false });
+    name: '', pwd: '', signupError: false, loading: false });
 
   const handleFormSubmit = formData => {
     setData({ ...data, ...formData });
@@ -42,8 +42,10 @@ export default function Login() {
     }
   }
 
+
   useEffect(() => {
     if(data.username && data.pwd && data.name) {
+      setData({ ...data, loading: true });
       signupUser();
     }
   }, [data.username, data.pwd, data.name]);
@@ -58,7 +60,9 @@ export default function Login() {
     <main className="signup_main">
       <Head>
         <title>Create an Hey Messenger account</title>
+        <link href="/favicon.png" rel='icon' />
       </Head>
+      {data.loading && <Spinner />}
       <div className="signup_app__title"><em>Hey!</em> Messenger</div>
       <div className="signup_container">
         <h2>Create Account</h2>
@@ -71,7 +75,7 @@ export default function Login() {
           width="50"
           height="50"
         />
-        <SignupForm formHandler={handleFormSubmit} />
+        <SignupForm loading={data.loading} formHandler={handleFormSubmit} />
         <div className="have__account">
           Have account? <a href="/login">login</a> instead.
         </div>

@@ -1,4 +1,7 @@
 import { useState, useReducer, useRef, useEffect, useContext } from 'react';
+import dynamic from 'next/dynamic'
+const Picker = dynamic(() => import('emoji-picker-react'), { ssr: false })
+// import Picker from 'emoji-picker-react';
 
 let chatRef;
 
@@ -78,6 +81,7 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
 
 const InputBar = ({ chatId, from, sendTo, dispatch }) => {
   const [chatInputValue, setChatInputValue] = useState('');
+  const [emoji, setEmoji] = useState({ visible: false, emoji: null });
   const inputRef = useRef();
 
 
@@ -100,50 +104,60 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
     inputRef.current.style.height = '1px';
 
     setChatInputValue('');
-
+    setEmoji({ visible: false, emoji: null })
 
     if(chatRef) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }
 
-  const handleEmojiToggler = evt => {
-    // toggle emoji [window + .]
+  const handleEmojiClick = (evt, _emoji) => {
+     // setEmoji({ emoji: _emoji.emoji, ...emoji });
+     setChatInputValue(chatInputValue + ' ' + _emoji.emoji)
+  }
+  const handleEmojiToggler = (evt, _emoji) => {
+     setEmoji({ ...emoji, visible: !emoji.visible })
   }
 
 
   return (
     <div className="input__bar">
-      <label htmlFor="chat-input" className="input__group">
-        <button className="icon__emoji" onClick={handleEmojiToggler}>
+      <div className="input__bar--container">
+        <label htmlFor="chat-input" className="input__group">
+
+          <button className="icon__emoji" onClick={handleEmojiToggler}>
+            <img
+              src="/icon-emoji.svg"
+              alt="Send message"
+              width="25"
+              height="25"
+            />
+          </button>
+          <textarea
+            ref={inputRef}
+            rows="1"
+            id="chat-input"
+            className="chat__input--box"
+            placeholder="Type a message"
+            value={chatInputValue}
+            onChange={handleChatInput}
+          />
+        </label>
+        <button className="send__message--button"
+          onClick={handleSendMessage}
+          disabled={chatInputValue.length < 1 && true}
+        >
           <img
-            src="/icon-emoji.svg"
+            src="/icon-send.svg"
             alt="Send message"
-            width="25"
-            height="25"
+            width="30"
+            height="30"
           />
         </button>
-        <textarea
-          ref={inputRef}
-          rows="1"
-          id="chat-input"
-          className="chat__input--box"
-          placeholder="Type a message"
-          value={chatInputValue}
-          onChange={handleChatInput}
-        />
-      </label>
-      <button className="send__message--button"
-        onClick={handleSendMessage}
-        disabled={chatInputValue.length < 1 && true}
-      >
-        <img
-          src="/icon-send.svg"
-          alt="Send message"
-          width="30"
-          height="30"
-        />
-      </button>
+      </div>
+      <div className="emoji__panel" style={{ display: `${(emoji.visible) ? 'block' : 'none' }`}}>
+        <Picker onEmojiClick={handleEmojiClick} />
+      </div>
     </div>
   );
 }

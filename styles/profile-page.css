@@ -48,10 +48,6 @@
   -webkit-border-radius: 100px;
   border-radius: 100px;
 }
-.profile_page__main .profile_image__container img {
-  width: 100%;
-  height: 100%;
-}
 .profile_page__main .logout-container {
   display: flex;
   justify-content: center;
@@ -92,8 +88,8 @@
 }
 .profile_page__main .user_link {
   font-size: 0.7rem;
-  padding: 0.3rem;
-  overflow: auto;
+  padding: 0 2px 0 2px;
+  overflow-x: auto;
 }
 .profile_page__main .copy_link__button {
   margin-left: 0.2rem;

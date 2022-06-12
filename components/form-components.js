@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function Form({ showUsername, showName, showPassword, showCPassword, onSubmit }) {
+function Form({ showUsername, showName, showPassword, showCPassword, loading, onSubmit }) {
   const [data, setData] = useState({
     name: '',
     username: '',
@@ -133,6 +133,7 @@ function Form({ showUsername, showName, showPassword, showCPassword, onSubmit })
       <div className="form_input__group">
         <button
           role="submit"
+          disabled={loading}
           className="form_submit__button">
             {showName ? 'Sign up' : 'Login' }
         </button>
@@ -143,9 +144,6 @@ function Form({ showUsername, showName, showPassword, showCPassword, onSubmit })
 }
 
 export function Alert({ text, hide, type }) {
-  // type "danger", "warning", "success"
-  // const [visible, setVisible] = useState(show)
-  // style={{display: (visible ? 'flex' : 'none')}}
   return (
     <div className={`alert ${type}`}>
       <strong>{text}</strong>
@@ -154,7 +152,7 @@ export function Alert({ text, hide, type }) {
   );
 }
 
-export function LoginForm({ formHandler }) {
+export function LoginForm({ loading, formHandler }) {
   return (
     <div className="login_form__group">
       <Form
@@ -162,13 +160,14 @@ export function LoginForm({ formHandler }) {
         showName={false}
         showPassword={true}
         showCPassword={false}
+        loading={loading}
         onSubmit={formHandler}
       />
     </div>
   )
 }
 
-export function SignupForm({ formHandler }) {
+export function SignupForm({ loading, formHandler }) {
   return (
     <div className="signup_form__group">
     <Form
@@ -176,6 +175,7 @@ export function SignupForm({ formHandler }) {
       showName={true}
       showPassword={true}
       showCPassword={true}
+      loading={loading}
       onSubmit={formHandler}
     />
     </div>

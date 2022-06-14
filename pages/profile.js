@@ -16,6 +16,8 @@ const editData = {
 export default function Profile({ holdRendering }) {
   const router = useRouter();
   const [appState, setAppState] = useContext(StateContext);
+  const [file, setFile] = useState(null);
+  const [createObjectURL, setCreateObjectURL] = useState(null);
   const [data, setData] = useState({
     edit: false,
     valueChanged: false,
@@ -23,7 +25,7 @@ export default function Profile({ holdRendering }) {
     editName: '',
     editUsername: '',
     editEmail: '',
-    editPhoto: {}
+    editPhoto: null
   });
   const [copyText, setCopyText] = useState('copy');
 
@@ -123,28 +125,50 @@ export default function Profile({ holdRendering }) {
 
   }, []);
 
-  const handleFileChange = evt => {
-    let file = evt.target.files;
+  useEffect(() => {
     if(file) {
-      console.log(file);
-      setData({ ...data, editPhoto: file[0] });
+      setCreateObjectURL(URL.createObjectURL(file))
     }
+  }, [file])
+
+  const handleFileChange = evt => {
+    setFile(evt.target.files[0]);
+
+    // console.log('file', file);
+    // if(file) {
+    //   // console.log('file', file);
+    //   // setData({ ...data, editPhoto: file });
+    // }
   }
 
   const updateUserData = async () => {
     const formData = new FormData();
-    formData.append('photo', data.editPhoto);
+    formData.append('username', appState.user.username);
+    if(file) {
+      formData.append('photo', file);
+    }
+    if(data.username && data.username >= 6) {
+      formData.append('newUsername', data.username);
+    }
+    if(data.name && data.name.length > 3) {
+      formData.append('name', data.name);
+    }
+    if(data.email) {
+      formData.append('email', data.email);
+    }
+
+    // console.log(...formData);
 
     const resp = await fetch('api/users/update', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      // headers: {
+      //   'Content-Type': 'multipart/form-data; boundary=profilePhoto'
+      // },
       method: 'POST',
-      body: JSON.stringify(data.editPhoto)
+      body: formData
     });
     const userUpdated = await resp.json();
     if(userUpdated) {
-
+      setAppState({ ...appState, ...userUpdated });
     }
   }
 
@@ -167,14 +191,14 @@ export default function Profile({ holdRendering }) {
           <div className="profile_page">
             <div className="profile_image__container">
               {!data.edit ? <img
-                src={`/${appState.user.profilePhoto}`}
+                src={`/uploads/${appState.user.profilePhoto }`}
                 alt="Avatar"
                 width="150"
                 height="150"
               /> :
               <label htmlFor="photo-upload">
                 <img
-                  src="/icon-camera-plus.svg"
+                  src={createObjectURL ? createObjectURL : "/icon-camera-plus.svg"}
                   alt="upload photo"
                   width="100"
                   height="100"
@@ -183,11 +207,15 @@ export default function Profile({ holdRendering }) {
               <input
                 id="photo-upload"
                 type="file"
+                name="photo"
                 style={{ display: 'none' }}
                 accept="image/png, image/jpeg"
                 onChange={handleFileChange}
               />
             </div>
+            {data.edit && <small style={{ textAlign: 'center', display: 'block', color: 'gray'}}>
+              Image should be 78kb maximum size
+            </small>}
 
             <ProfileDetail label="username" value={`${appState.user.username && '@'}${appState.user.username}`}
               onEdit={handleInputChange} visible={data.edit} />

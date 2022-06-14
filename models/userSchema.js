@@ -37,14 +37,6 @@ const userSchema = new mongoose.Schema({
     ref: 'Messages'
   },
   contacts: [contactSchema],
-  photo: new mongoose.Schema({
-    name: String,
-    desc: String,
-    img: {
-      data: Buffer,
-      contentType: String
-    }
-  }),
   link: {
     type: String,
     unique: true

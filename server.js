@@ -1,5 +1,8 @@
 const express = require('express');
 const next = require('next');
+const multer = require('multer');
+const { nanoid } = require('nanoid');
+
 // const { ExpressPeerServer, PeerServer } = require('peer');
 
 
@@ -22,6 +25,24 @@ app.prepare()
     // const peerServer = ExpressPeerServer(server, { debug: true });
 
     // server.use('/peerjs', peerServer);
+
+    // server.use(express.urlencoded({ extended: true }));
+    // server.use(express.json());
+
+    // const storage = multer.diskStorage({
+    //   destination: (req, file, cb) => {
+    //     cb(null, './public/uploads');
+    //   },
+    //   filename: (req, file, cb) => {
+    //     cb(null, file.originalname);
+    //   }
+    // })
+    // const upload = multer({ storage });
+    // const upload = multer({ dest: './public/uploads'});
+
+    // server.post('api/users/update', upload.single('photo'));
+
+
 
 
     const listener = server.listen(port, err => {

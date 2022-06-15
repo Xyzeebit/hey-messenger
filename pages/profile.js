@@ -27,6 +27,7 @@ export default function Profile({ holdRendering }) {
     editEmail: '',
     editPhoto: null
   });
+
   const [copyText, setCopyText] = useState('copy');
 
   const handleInputChange = (name, value) => {
@@ -64,7 +65,6 @@ export default function Profile({ holdRendering }) {
       });
     }
     if(command === 'save') {
-      console.log('setting....', editData)
 
       let name, username, email = '';
       // save data
@@ -112,7 +112,6 @@ export default function Profile({ holdRendering }) {
       if(localSession.isLoggedIn) {
         fetchUser(localSession.username, false, user => {
           if(user) {
-            // console.log('fetched user', user)
             setAppState({ ...appState, user, active: 'profile' });
           }
         });
@@ -132,32 +131,28 @@ export default function Profile({ holdRendering }) {
   }, [file])
 
   const handleFileChange = evt => {
-    setFile(evt.target.files[0]);
-
-    // console.log('file', file);
-    // if(file) {
-    //   // console.log('file', file);
-    //   // setData({ ...data, editPhoto: file });
-    // }
+    const fileLimit = 78;
+    const size = evt.target.file[0].size;
+    const fileInKb = size / 1024;
+    if(fileInKb < fileLimit) {
+      setFile(evt.target.files[0]);
+    }
   }
 
   const updateUserData = async () => {
     const formData = new FormData();
     formData.append('username', appState.user.username);
-    if(file) {
-      formData.append('photo', file);
-    }
-    if(data.username && data.username >= 6) {
-      formData.append('newUsername', data.username);
-    }
-    if(data.name && data.name.length > 3) {
-      formData.append('name', data.name);
-    }
-    if(data.email) {
-      formData.append('email', data.email);
-    }
+    formData.append('photo', file);
 
-    // console.log(...formData);
+    if(editData.username && editData.username.length >= 6) {
+      formData.append('newUsername', editData.username);
+    }
+    if(editData.name && editData.name.length >= 3) {
+      formData.append('name', editData.name);
+    }
+    if(editData.email) {
+      formData.append('email', editData.email);
+    }
 
     const resp = await fetch('api/users/update', {
       // headers: {
@@ -168,13 +163,15 @@ export default function Profile({ holdRendering }) {
     });
     const userUpdated = await resp.json();
     if(userUpdated) {
+      console.log('update', userUpdated);
+      const localSession = JSON.parse(localStorage.getItem('hey_messenger'));
+      localSession.username = userUpdated.username;
+      localStorage.setItem('hey_messenger', JSON.stringify(localSession));
       setAppState({ ...appState, ...userUpdated });
+      router.reload();
+
     }
   }
-
-  // useEffect(() => {
-  //
-  // }, []);
 
 
   if(holdRendering && !appState.user.isLoggedIn) {

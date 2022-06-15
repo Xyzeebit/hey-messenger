@@ -7,7 +7,7 @@ export default function CircleImage({ image, isOnline }) {
       }
       <div className="circle__image--container">
         <img
-          src={image}
+          src={`/uploads/${image}`}
           alt="Profile"
           width="50"
           height="50"

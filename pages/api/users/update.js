@@ -10,21 +10,24 @@ export const config = {
   }
 }
 
-
 const options = {
   uploadDir: './public/uploads',
   keepExtensions: true,
 }
 
-const post = async (req, res) => {
+const upload = async (req, res) => {
   const form = new formidable.IncomingForm();
-    form.parse(req, async function (err, fields, files) {
-      console.log(fields);
+  form.parse(req, async function (err, fields, files) {
       const user = await saveFile(fields, files.photo)
-    });
+      if(user.exist) {
+        res.status(409).json({ successful: false });
+      } else {
+        res.status(201).json(user);
+      }
+  });
 }
 
-const saveFile = async (fields, file, cb) => {
+const saveFile = async (fields, file) => {
   if(file) {
     const data = fs.readFileSync(file.filepath);
     const filename = nanoid(16) + path.extname(file.originalFilename);
@@ -33,6 +36,7 @@ const saveFile = async (fields, file, cb) => {
     const user = await updateUserInfo(fields, filename);
     return user;
   } else {
+    // console.log('fields to update', fields);
     const user = await updateUserInfo(fields, '');
     return user;
   }
@@ -40,15 +44,19 @@ const saveFile = async (fields, file, cb) => {
 }
 
 const updateUserInfo = async (fields, filename) => {
-  const user = await User.findOne({ username: fields.username });
+  let user;
   let exist = false;
-  console.log(fields);
+
+  if(fields.username) {
+    user = await User.findOne({ username: fields.username });
+  }
+
   if(user) {
     if(fields.newUsername) {
-      const checkUser = await User.findOne({ username: fields.username });
+      const checkUser = await User.findOne({ username: fields.newUsername });
       if(checkUser) {
         exist = true;
-        console.log('user xist');
+        console.log('user exist');
         return { exist };
       } else {
          user.username = fields.newUsername;
@@ -65,8 +73,7 @@ const updateUserInfo = async (fields, filename) => {
       user.profilePhoto = filename;
     }
 
-    await user.save();
-
+    user = await user.save();
     return {
       username: user.username,
       email: user.email,
@@ -79,12 +86,17 @@ const updateUserInfo = async (fields, filename) => {
 
 
 
-export default async (req, res) => {
-  const  user = await post(req, res);
-  console.log(user)
-  if(user.exist) {
-    res.status(409).json({ successful: false });
-  } else {
-    res.status(201).json(user);
-  }
+export default (req, res) => {
+
+  upload(req, res);
+
+  // console.log('user:::', user)
+  // if(user.exist) {
+  //   res.status(409).json({ successful: false });
+  // } else {
+  //   res.status(201).json(user);
+  // }
+
+
+
 }

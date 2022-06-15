@@ -96,10 +96,10 @@ export default function Home({ userSession }) {
 
   }, [appState.user.isLoggedIn]);
 
-  useEffect(() => {
-    window.addEventListener('visibilitychange', visibleHandler);
-    return () => window.removeEventListener('visibilitychange', visibleHandler);
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener('visibilitychange', visibleHandler);
+  //   return () => window.removeEventListener('visibilitychange', visibleHandler);
+  // }, []);
 
   // useEffect(() => {
   //   import('peerjs').then(({ default: Peer }) => {

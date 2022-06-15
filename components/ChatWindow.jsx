@@ -46,7 +46,7 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
         </button>
 
         <img
-          src={`/${photo}`}
+          src={`/uploads/${photo}`}
           alt={name}
           width="60"
           height="60"

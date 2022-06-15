@@ -48,13 +48,13 @@ export default function Login() {
       setData({ ...data, loading: true });
       signupUser();
     }
-  }, [data.username, data.pwd, data.name]);
+  }, [data.username, data.pwd, data.name, data, signupUser]);
 
   useEffect(() => {
     if(appState.user.isLoggedIn) {
       router.push('/');
     }
-  }, [appState.user.isLoggedIn]);
+  }, [appState.user.isLoggedIn, router]);
 
   return (
     <main className="signup_main">

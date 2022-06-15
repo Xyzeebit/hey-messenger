@@ -86,17 +86,6 @@ const updateUserInfo = async (fields, filename) => {
 
 
 
-export default (req, res) => {
-
+export default function handler (req, res) {
   upload(req, res);
-
-  // console.log('user:::', user)
-  // if(user.exist) {
-  //   res.status(409).json({ successful: false });
-  // } else {
-  //   res.status(201).json(user);
-  // }
-
-
-
 }

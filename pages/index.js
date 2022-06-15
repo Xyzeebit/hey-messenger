@@ -3,7 +3,7 @@ import { sessionOptions } from "../lib/session";
 import { useReducer, useEffect, useLayoutEffect, useState, useContext } from 'react';
 import Head from 'next/head'
 import { useRouter } from 'next/router';
-import { useSocket, socket } from '../lib/init-socket';
+import { connectSocket, socket } from '../lib/init-socket';
 import { fetchUser, fetchContacts } from '../lib/fetchUser';
 import { writeMessage } from '../lib/write-message';
 
@@ -45,7 +45,7 @@ export default function Home({ userSession }) {
 
   useEffect(() => {
     setAppState({ ...appState, active: 'home' });
-  }, [])
+  }, [appState, setAppState]);
 
   useEffect(() => {
     if(localStorage.getItem('hey_messenger')) {
@@ -64,7 +64,7 @@ export default function Home({ userSession }) {
       router.push('/signup');
     }
 
-  }, []);
+  }, [appState, setAppState, router]);
 
   useEffect(() => {
     const { mid, message } = newMessage;
@@ -79,12 +79,12 @@ export default function Home({ userSession }) {
           });
         }
     }
-  }, [newMessage.mid]);
+  }, [newMessage.mid, appState.user.username, newConversation.showChatWindow, newMessage, oldMsgId]);
 
   useEffect(() => {
 
     if(appState.user.isLoggedIn) {
-      useSocket(appState.user.username, dispatch, ({ message }) => {
+      connectSocket(appState.user.username, dispatch, ({ message }) => {
         setMessage({ message, mid: (message._id !== newMessage.mid) ? message._id : newMessage.mid });
       });
     }
@@ -94,7 +94,7 @@ export default function Home({ userSession }) {
       console.log('Unmounting...');
     };
 
-  }, [appState.user.isLoggedIn]);
+  }, [appState.user.isLoggedIn, appState.user.username, newMessage.mid]);
 
   // useEffect(() => {
   //   window.addEventListener('visibilitychange', visibleHandler);

@@ -1,5 +1,6 @@
 {
   "name": "hey_messenger",
+  "cacheDirectories": [".next/cache"],
   "private": true,
   "scripts": {
     "dev": "node server.js",

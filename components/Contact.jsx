@@ -49,7 +49,7 @@ export const ContactList = ({ contacts, dispatch }) => {
         });
       }
     }
-  }, [appState.user.contacts]);
+  }, [appState.user.isLoggedIn, appState.user.contacts, dispatch]);
 
   useEffect(() => {
     if(appState.user.isLoggedIn) {
@@ -61,7 +61,7 @@ export const ContactList = ({ contacts, dispatch }) => {
         });
       }
     }
-  }, [appState.user.contacts])
+  }, [appState.user.isLoggedIn, appState.user.contacts, dispatch]);
 
   // console.log('finding user contacts', contacts);
 

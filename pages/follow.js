@@ -87,13 +87,10 @@ export default function FunctionalPage() {
     } else {
       router.push('/');
     }
-    // const paths = location.href.split('/');
-    // const uLink = paths[paths.length - 1];
-    // console.log(paths)
+
     if(localStorage.getItem('hey_messenger')) {
       const localSession = JSON.parse(localStorage.getItem('hey_messenger'));
 
-      // setUserInfo({ ...userInfo, isLoggedIn: localSession.isLoggedIn });
       if(localSession.isLoggedIn) {
         if(localSession.link !== uLink) {
           getUserWithLink(uLink);
@@ -111,7 +108,7 @@ export default function FunctionalPage() {
       // setUserInfo({ ...userInfo, isLoggedIn: false });
       getUserWithLink(uLink)
     }
-  }, []);
+  }, [getUserWithLink, router]);
 
   return (
     <div className="function_page">

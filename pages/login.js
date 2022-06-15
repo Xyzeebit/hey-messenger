@@ -53,7 +53,7 @@ export default function Login() {
         router.push('/');
       }
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if(appState.user.isLoggedIn) {
@@ -68,7 +68,8 @@ export default function Login() {
     if(data.loginError) {
       console.log('login error')
     }
-  }, [appState.user.isLoggedIn, data.loginError]);
+  }, [appState.user.isLoggedIn, data.loginError, appState.redirectToFollow.follow,
+    appState.user.link, router]);
 
   useEffect(() => {
     if(router.asPath.indexOf('?') !== -1) {
@@ -76,14 +77,14 @@ export default function Login() {
       // console.log(path, follow)
       setAppState({ ...appState, redirectToFollow: { follow }})
     }
-  }, [])
+  }, [appState, appState.redirectToFollow.follow, setAppState, router.asPath])
 
   useEffect(() => {
     if(data.username && data.pwd) {
       loginUser();
       setData({ ...data, loading: true });
     }
-  }, [data.username, data.pwd]);
+  }, [data.username, data.pwd, ]);
 
   return (
     <main className="login_main">

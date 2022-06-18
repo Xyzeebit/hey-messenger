@@ -17,13 +17,14 @@ app.prepare()
 
 
 
-
     // const peerServer = ExpressPeerServer(server, { debug: true });
 
     // server.use('/peerjs', peerServer);
 
     // server.use(express.urlencoded({ extended: true }));
     // server.use(express.json());
+
+
 
 
 
@@ -35,11 +36,11 @@ app.prepare()
     io = new Server(listener);
 
     server.all('*', (req, res) => {
-      req.io = io;
+      // req.io = io;
       return handle(req, res);
     });
 
-    communicator(io, []);
+    communicator(io, ["im5sHe_40buj_I2"]);
 
     // const peerExpress = require('express');
     // const peerApp = peerExpress();
@@ -66,25 +67,30 @@ app.prepare()
 
 
   function communicator(io, rooms) {
+    console.log('rooms in server', rooms)
 
-      io.on('connection', socket => {
-        console.log('connected...')
+    io.on('connection', socket => {
+      console.log('connected...')
 
-        socket.on('is online', username => {
-          socket.broadcast.emit('is online', username);
-        });
+      for (let room in rooms) {
+        socket.join(room);
+      }
 
-        socket.on('my-chat', msg => {
-          io.to(msg.chatId).emit('my-chat', msg)
-          // console.log('writing message to db', msg);
-        });
-
+      socket.on('is online', username => {
+        socket.broadcast.emit('is online', username);
       });
 
-      io.on('disconnect', socket =>  {
-        console.log('disconnected');
-        socket.disconnect();
-        socket.removeAllListener('my-chat');
-        socket = null;
+      socket.on('my-chat', msg => {
+        io.to(msg.chatId).emit('my-chat', msg)
+        // console.log('writing message to db', msg);
       });
+
+    });
+
+    io.on('disconnect', socket =>  {
+      console.log('disconnected');
+      socket.disconnect();
+      socket.removeAllListener('my-chat');
+      socket = null;
+    });
   }

@@ -1,10 +1,10 @@
 import { withIronSessionSsr } from 'iron-session/next';
 import { sessionOptions } from "../lib/session";
-import { useReducer, useEffect, useLayoutEffect, useState, useContext } from 'react';
+import { useReducer, useEffect, useCallback, useState, useContext, useMemo } from 'react';
 import Head from 'next/head'
 import { useRouter } from 'next/router';
-import { connectSocket, socket } from '../lib/init-socket';
-import { fetchUser, fetchContacts } from '../lib/fetchUser';
+// import { connectSocket, socket } from '../lib/init-socket';
+import { fetchUser } from '../lib/fetchUser';
 import { writeMessage } from '../lib/write-message';
 
 import Layout from '../components/Layout';
@@ -15,6 +15,10 @@ import StateContext from '../components/StateContext';
 // import io from 'socket.io-client';
 // import { Peer } from 'peerjs';
 
+import io from "socket.io-client";
+
+export const socket = io("/");
+
 let msgCount = 0
 
 export default function Home({ userSession }) {
@@ -23,7 +27,7 @@ export default function Home({ userSession }) {
   const { contacts, newConversation } = state;
   const [newMessage, setMessage] = useState({ mid: '', message: {}});
   const [oldMsgId, setOldMsgId] = useState('');
-  // const [isOnline, setI] = useState([]);
+  const [isOnline, setOnline] = useState({ online: false, username: '' });
   const router = useRouter();
 
   const visibleHandler = evt => {
@@ -43,58 +47,135 @@ export default function Home({ userSession }) {
     }
   }
 
-  useEffect(() => {
-    setAppState({ ...appState, active: 'home' });
-  }, [appState, setAppState]);
+  // const active = useMemo(() => 'home', [])
+
 
   useEffect(() => {
-    if(localStorage.getItem('hey_messenger')) {
-      const localSession = JSON.parse(localStorage.getItem('hey_messenger'));
-      if(localSession.isLoggedIn) {
-        fetchUser(localSession.username, false, user => {
-          if(user) {
+    setAppState({ ...appState, active: 'home' });
+  }, []);
+
+  const getUser = useCallback(() => {
+    if (localStorage.getItem("hey_messenger")) {
+      const localSession = JSON.parse(localStorage.getItem("hey_messenger"));
+      if (localSession.isLoggedIn) {
+        fetchUser(localSession.username, false, (user) => {
+          if (user) {
             setAppState({ ...appState, user, isLoggedIn: true });
           }
         });
-
       } else {
-        router.push('/login')
+        router.push("/login");
       }
     } else {
-      router.push('/signup');
+      router.push("/signup");
     }
-
-  }, [appState, setAppState, router]);
+  }, [appState, router]);
 
   useEffect(() => {
+    getUser();
+  }, []);
+
+  useCallback(() => {
+    console.log('is online callback');
+    if (isOnline.online) {
+      console.log('dispatching is online')
+      dispatch({ type: "USERS_ONLINE", username: isOnline.username });
+    }
+  }, [isOnline])
+
+  const sendMessage = useCallback(() => {
     const { mid, message } = newMessage;
-    if(mid !== oldMsgId) {
-      dispatch({ type: 'ADD_MESSAGE', message,
-        owner: appState.user.username, isOpen: newConversation.showChatWindow });
-        setOldMsgId(mid);
-        // write to db if sender is owner
-        if(appState.user.username === message.from) {
-          writeMessage(newConversation.username, message, resp => {
-            // console.log('writing message status', resp)
-          });
-        }
+    if (mid !== oldMsgId) {
+      dispatch({
+        type: "ADD_MESSAGE",
+        message,
+        owner: appState.user.username,
+        isOpen: newConversation.showChatWindow,
+      });
+      setOldMsgId(mid);
+      if (appState.user.username === message.from) {
+        writeMessage(newConversation.username, message, (resp) => {
+          // console.log('writing message status', resp)
+        });
+      }
     }
-  }, [newMessage.mid, appState.user.username, newConversation.showChatWindow, newMessage, oldMsgId]);
+  }, [oldMsgId, newMessage]);
 
   useEffect(() => {
+    sendMessage();
+  }, [newMessage]); //, appState.user.username, newConversation.showChatWindow, newMessage, oldMsgId]
 
-    if(appState.user.isLoggedIn) {
-      connectSocket(appState.user.username, dispatch, ({ message }) => {
-        setMessage({ message, mid: (message._id !== newMessage.mid) ? message._id : newMessage.mid });
-      });
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("client connected");
+    });
+
+    socket.on("connect_error", (err) => {
+      console.log("client connection error", err);
+    });
+
+    if (socket.connected) {
+      setInterval(() => {
+        socket.emit("is online", { username });
+      }, 10000);
     }
 
-    return () => {
-      socket.disconnect();
-      console.log('Unmounting...');
-    };
+    socket.on("is online", (user) => {
+      isOnline = setOnline({ online: true, username: user.username });
+    });
 
-  }, [appState.user.isLoggedIn, appState.user.username, newMessage.mid]);
+    socket.on("my-chat", (message) => {
+      // console.log('message received', msg)
+
+      setMessage({
+        message,
+        mid: message._id !== newMessage.mid ? message._id : newMessage.mid,
+      });
+      // callback({ message: msg });
+    });
+
+    socket.on("disconnect", () => {
+      console.log("disconnected");
+    });
+  }, []);
+
+  // const connectToSocket = useCallback(() => {
+  //   console.log('calling connect from callback');
+  //   connectSocket(appState.user.username, dispatch, ({ message }) => {
+  //     setMessage({
+  //       message,
+  //       mid: message._id !== newMessage.mid ? message._id : newMessage.mid,
+  //     });
+  //   });
+  // }, [appState.user.username, newMessage.mid]);
+
+  // useEffect(() => {
+  //   if(!socket.connected) {
+  //     console.log('socket is not connected retry');
+  //     const soct = setInterval(() => {
+  //       socket.connected ? "" : connectToSocket();
+  //     }, 10000)
+  //   }
+    
+  //   return () => clearInterval(soct);
+  // }, [socket.connected])
+
+  // useEffect(() => {
+
+  //   if (appState.user.isLoggedIn) {
+  //     console.log('user is logged in')
+  //     connectToSocket()
+  //   } else {
+  //     console.log('user is not logged in');
+  //   }
+
+  //   return () => {
+  //     socket.disconnect();
+  //     console.log('Unmounting...');
+  //   };
+
+  // }, [appState.user.isLoggedIn]);
 
   // useEffect(() => {
   //   window.addEventListener('visibilitychange', visibleHandler);

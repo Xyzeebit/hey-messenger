@@ -44,8 +44,8 @@ export default function Profile({ holdRendering }) {
     if(navigator.clipboard) {
       try {
         navigator.clipboard.writeText(
-          location.href.substring(0, location.href.lastIndexOf('/')) +
-          '/follow/' + appState.user.link
+          location.href.substring(0, window.location.href.lastIndexOf('/')) +
+          '/follow?link=' + appState.user.link
         );
       } catch (e) {
 
@@ -100,12 +100,8 @@ export default function Profile({ holdRendering }) {
         ...data, edit: false
       });
     }
-  }
-
-  const getUserProfile = () => {
-    return appState.user;
-  }
-
+    }
+    
   useEffect(() => {
     if(localStorage.getItem('hey_messenger')) {
       const localSession = JSON.parse(localStorage.getItem('hey_messenger'));

@@ -3,8 +3,9 @@
 import User from '../../models/userSchema';
 import Message from '../../models/messagesSchema';
 import dbConnect from '../../lib/dbConnect';
+import { Server } from 'socket.io';
 
-
+let io;
 export default async function handler(req, res) {
 
   dbConnect();
@@ -26,7 +27,7 @@ export default async function handler(req, res) {
 
   }
 
-
+ 
   if(req.io) {
     console.log('Socket is already running');
     communicator(req.io, rooms);
@@ -35,6 +36,8 @@ export default async function handler(req, res) {
     // io = new Server(res.socket.server);
     // req.io = io;
   }
+  
+  // communicator(io, req.rooms)
 
 
   res.end();
@@ -49,6 +52,16 @@ function communicator(io, rooms) {
       for (let room of rooms) {
         socket.join(room);
       }
+
+      socket.on('is online', username => {
+        socket.broadcast.emit('is online', username);
+        console.log(username, ' is online')
+      });
+
+      socket.on('my-chat', msg => {
+        io.to(msg.chatId).emit('my-chat', msg)
+          // console.log('writing message to db', msg);
+      });
       
     });
 

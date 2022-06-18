@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useContext } from 'react';
 import { SignupForm, Alert, Spinner } from '../components/form-components';
@@ -20,6 +21,7 @@ export default function Login() {
     }
   }
 
+  
   const signupUser = async () => {
     const options = {
       method: 'POST',
@@ -48,7 +50,7 @@ export default function Login() {
       setData({ ...data, loading: true });
       signupUser();
     }
-  }, [data.username, data.pwd, data.name, data, signupUser]);
+  }, [data.username, data.pwd, data.name]);
 
   useEffect(() => {
     if(appState.user.isLoggedIn) {
@@ -60,26 +62,31 @@ export default function Login() {
     <main className="signup_main">
       <Head>
         <title>Create an Hey Messenger account</title>
-        <link href="/favicon.png" rel='icon' />
+        <link href="/favicon.png" rel="icon" />
       </Head>
       {data.loading && <Spinner />}
-      <div className="signup_app__title"><em>Hey!</em> Messenger</div>
+      <div className="signup_app__title">
+        <em>Hey!</em> Messenger
+      </div>
       <div className="signup_container">
         <h2>Create Account</h2>
-        {data.signupError &&
-          <Alert text="Unable to create account" hide={handleError} type="danger" />
-        }
-        <img
-          src="/logo.png"
-          alt="Hey Messenger"
-          width="50"
-          height="50"
-        />
+        {data.signupError && (
+          <Alert
+            text="Unable to create account"
+            hide={handleError}
+            type="danger"
+          />
+        )}
+        <img src="/logo.png" alt="Hey Messenger" width="50" height="50" />
         <SignupForm loading={data.loading} formHandler={handleFormSubmit} />
         <div className="have__account">
-          Have account? <a href="/login">login</a> instead.
+          Have account?{" "}
+          <Link href="/login">
+            <a>login</a>
+          </Link>{" "}
+          instead.
         </div>
       </div>
     </main>
-  )
+  );
 }

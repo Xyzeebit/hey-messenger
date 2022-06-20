@@ -5,7 +5,6 @@ export default async function handler(req, res) {
   await dbConnect();
 
   const { link } = req.query;
-  console.log("calling api link", link);
   if (link) {
     // find user with link
     const user = await User.findOne({ link });

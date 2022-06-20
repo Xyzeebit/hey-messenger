@@ -43,7 +43,7 @@ function contactsReducer(state, action) {
       };
       // console.log('sending message to ', socket.id);
       if(socket.connected) {
-        console.log('reducer connected');
+        // console.log('reducer connected');
         socket.emit("my chat", newMsg);
       }
       return state;

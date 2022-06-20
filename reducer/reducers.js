@@ -1,5 +1,8 @@
-import { socket } from '../lib/init-socket';
+// import { socket } from '../lib/init-socket';
 import { nanoid } from 'nanoid';
+import io from "socket.io-client";
+
+const socket = io("/");
 
 export const initialState = {
   contacts: [],

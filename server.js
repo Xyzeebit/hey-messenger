@@ -36,11 +36,13 @@ app.prepare()
     const io = new Server(listener);
 
     server.all('*', (req, res) => {
-      req.io = io;
+      // req.io = io;
       return handle(req, res);
     });
 
     // communicator(io, ["im5sHe_40buj_I2"]);
+    communicator(io);
+
 
     // const peerExpress = require('express');
     // const peerApp = peerExpress();
@@ -64,32 +66,24 @@ app.prepare()
   })
 
 
-
-
-  function communicator(io, rooms) {
-    console.log('rooms in server', rooms)
+  function communicator(io) {
 
     io.on('connection', socket => {
       console.log('connected...')
 
-      for (let room in rooms) {
-        socket.join(room);
-      }
+      socket.on('rooms', rooms => {
+        for (let room of rooms) {
+          socket.join(room);
+        }
+      })
 
       socket.on('is online', username => {
         socket.broadcast.emit('is online', username);
       });
 
-      socket.on('my-chat', msg => {
-        io.to(msg.chatId).emit('my-chat', msg)
-        console.log('writing message to db', msg);
+      socket.on('my chat', msg => {
+        io.to(msg.chatId).emit('my chat', msg)
       });
-
-      socket.on('chat', msg => {
-        console.log(msg)
-        io.to(rooms[0]).emit("sending message to client with io");
-        // socket.emit('chat', 'sending message to client')
-      })
 
     });
 

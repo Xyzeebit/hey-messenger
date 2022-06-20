@@ -108,7 +108,7 @@ function Form({ showUsername, showName, showPassword, showCPassword, loading, on
           {data.pwdErr && <small className="pwd_err error">{data.pwdErrText}</small>}
         </label>
         <input
-          type="text"
+          type="password"
           value={data.pwd}
           onChange={({ target}) => setData({...data, pwd: target.value})}
           id="pwd"
@@ -122,7 +122,7 @@ function Form({ showUsername, showName, showPassword, showCPassword, loading, on
           {data.cpwdErr && <small className="cpwd_err error">Passwords do not match</small>}
         </label>
         <input
-          type="text"
+          type="password"
           value={data.cpwd}
           onChange={({ target}) => setData({...data, cpwd: target.value})}
           id="cpwd"

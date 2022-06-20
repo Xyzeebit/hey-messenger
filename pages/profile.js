@@ -1,10 +1,10 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, useEffect, useLayoutEffect, useContext } from 'react';
-import { nanoid } from 'nanoid';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import StateContext from '../components/StateContext';
 import Layout from '../components/Layout';
+import { Spinner } from '../components/form-components';
 import { fetchUser } from '../lib/fetchUser';
 
 const editData = {
@@ -13,7 +13,7 @@ const editData = {
   email: ''
 };
 
-export default function Profile({ holdRendering }) {
+export default function Profile() {
   const router = useRouter();
   const [appState, setAppState] = useContext(StateContext);
   const [file, setFile] = useState(null);
@@ -27,6 +27,7 @@ export default function Profile({ holdRendering }) {
     editEmail: '',
     editPhoto: null
   });
+  const [loading, setLoading] = useState(true);
 
   const [copyText, setCopyText] = useState('copy');
 
@@ -91,8 +92,7 @@ export default function Profile({ holdRendering }) {
         username,
         email
       });
-      console.log('data....', data)
-      // write to server in useEffect
+      
       updateUserData();
     }
     if(command === 'cancel') {
@@ -100,25 +100,29 @@ export default function Profile({ holdRendering }) {
         ...data, edit: false
       });
     }
-    }
-    
-  useEffect(() => {
-    if(localStorage.getItem('hey_messenger')) {
-      const localSession = JSON.parse(localStorage.getItem('hey_messenger'));
-      if(localSession.isLoggedIn) {
-        fetchUser(localSession.username, false, user => {
-          if(user) {
-            setAppState({ ...appState, user, active: 'profile' });
+  }
+
+  const getUser = useCallback(() => {
+    if (localStorage.getItem("hey_messenger")) {
+      const localSession = JSON.parse(localStorage.getItem("hey_messenger"));
+      if (localSession.isLoggedIn) {
+        fetchUser(localSession.username, false, (user) => {
+          if (user) {
+            setAppState({ ...appState, user, isLoggedIn: true });
+            setLoading(false);
           }
         });
       } else {
-        router.push('/login')
+        router.push("/login");
       }
     } else {
-      router.push('/signup');
+      router.push("/signup");
     }
-
-  }, [appState, setAppState, router]);
+  }, [appState, router]);
+    
+  useEffect(() => {
+    getUser();
+  }, []);
 
   useEffect(() => {
     if(file) {
@@ -170,8 +174,12 @@ export default function Profile({ holdRendering }) {
   }
 
 
-  if(holdRendering && !appState.user.isLoggedIn) {
-    return null
+  if(loading) {
+    return (
+      <div className="main_spinner">
+        <Spinner />
+      </div>
+    );
   } else {
 
     return (
@@ -308,7 +316,3 @@ const InviteFriend = ({ link, copyText, onClick }) => (
     </div>
   </div>
 );
-
-export async function getStaticProps() {
-  return { props: { holdRendering: true } }
-}

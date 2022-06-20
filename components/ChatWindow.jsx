@@ -1,6 +1,6 @@
 import { useState, useReducer, useRef, useEffect, useContext } from 'react';
-import dynamic from 'next/dynamic'
-const Picker = dynamic(() => import('emoji-picker-react'), { ssr: false })
+// import dynamic from 'next/dynamic'
+// const Picker = dynamic(() => import('emoji-picker-react'), { ssr: false })
 // import Picker from 'emoji-picker-react';
 
 let chatRef;
@@ -155,9 +155,9 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
           />
         </button>
       </div>
-      <div className="emoji__panel" style={{ display: `${(emoji.visible) ? 'block' : 'none' }`}}>
+      {/* <div className="emoji__panel" style={{ display: `${(emoji.visible) ? 'block' : 'none' }`}}>
         <Picker onEmojiClick={handleEmojiClick} />
-      </div>
+      </div> */}
     </div>
   );
 }

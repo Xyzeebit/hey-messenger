@@ -55,12 +55,10 @@ function communicator(io, rooms) {
 
       socket.on('is online', username => {
         socket.broadcast.emit('is online', username);
-        console.log(username, ' is online')
       });
 
-      socket.on('my-chat', msg => {
-        io.to(msg.chatId).emit('my-chat', msg)
-          // console.log('writing message to db', msg);
+      socket.on('my chat', msg => {
+        io.to(msg.chatId).emit('my chat', msg)
       });
       
     });

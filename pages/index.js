@@ -1,57 +1,61 @@
-import { withIronSessionSsr } from 'iron-session/next';
+import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../lib/session";
-import { useReducer, useEffect, useCallback, useState, useContext, useMemo } from 'react';
-import Head from 'next/head'
-import { useRouter } from 'next/router';
-// import { connectSocket, socket } from '../lib/init-socket';
-import { fetchUser } from '../lib/fetchUser';
-import { writeMessage } from '../lib/write-message';
+import {
+  useReducer,
+  useEffect,
+  useCallback,
+  useState,
+  useContext,
+  useMemo,
+} from "react";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { connectSocket, socket } from "../lib/init-socket";
+import { fetchUser } from "../lib/fetchUser";
+import { writeMessage } from "../lib/write-message";
 
-import Layout from '../components/Layout';
-import { ContactList } from '../components/Contact';
-import ChatWindow from '../components/ChatWindow';
-import { appReducer, initialState } from '../reducer/reducers';
-import StateContext from '../components/StateContext';
+import Layout from "../components/Layout";
+import { ContactList } from "../components/Contact";
+import ChatWindow from "../components/ChatWindow";
+import { appReducer, initialState } from "../reducer/reducers";
+import StateContext from "../components/StateContext";
 // import io from 'socket.io-client';
 // import { Peer } from 'peerjs';
 
 import io from "socket.io-client";
 
-export const socket = io("/");
+// const socket = io("/");
 
-let msgCount = 0
+let msgCount = 0;
 
 export default function Home({ userSession }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [appState, setAppState] = useContext(StateContext);
   const { contacts, newConversation } = state;
-  const [newMessage, setMessage] = useState({ mid: '', message: {}});
-  const [oldMsgId, setOldMsgId] = useState('');
-  const [isOnline, setOnline] = useState({ online: false, username: '' });
+  const [newMessage, setMessage] = useState({ mid: "", message: {} });
+  const [oldMsgId, setOldMsgId] = useState("");
+  const [isOnline, setOnline] = useState({ online: false, username: "" });
   const router = useRouter();
 
-  const visibleHandler = evt => {
-    let fav = document.getElementById('favicon');
-    if(document.hidden) {
-      if(newMessage.message) {
-        if(oldMsgId && oldMsgId !== newMessage.message._id) {
-          if(fav.href.endsWith('favicon.png')) {
-            fav.href = fav.href.replace('favicon.png', 'favicon-alt.png');
+  const visibleHandler = (evt) => {
+    let fav = document.getElementById("favicon");
+    if (document.hidden) {
+      if (newMessage.message) {
+        if (oldMsgId && oldMsgId !== newMessage.message._id) {
+          if (fav.href.endsWith("favicon.png")) {
+            fav.href = fav.href.replace("favicon.png", "favicon-alt.png");
           }
         }
       }
     } else {
-      if(fav.href.endsWith('favicon-alt.png')) {
-        fav.href = fav.href.replace('favicon-alt.png', 'favicon.png')
+      if (fav.href.endsWith("favicon-alt.png")) {
+        fav.href = fav.href.replace("favicon-alt.png", "favicon.png");
       }
     }
-  }
-
-  // const active = useMemo(() => 'home', [])
-
+  };
 
   useEffect(() => {
-    setAppState({ ...appState, active: 'home' });
+    setAppState({ ...appState, active: "home" });
   }, []);
 
   const getUser = useCallback(() => {
@@ -75,13 +79,11 @@ export default function Home({ userSession }) {
     getUser();
   }, []);
 
-  useCallback(() => {
-    console.log('is online callback');
+  useEffect(() => {
     if (isOnline.online) {
-      console.log('dispatching is online')
       dispatch({ type: "USERS_ONLINE", username: isOnline.username });
     }
-  }, [isOnline])
+  }, [isOnline.username]);
 
   const sendMessage = useCallback(() => {
     const { mid, message } = newMessage;
@@ -103,9 +105,18 @@ export default function Home({ userSession }) {
 
   useEffect(() => {
     sendMessage();
-  }, [newMessage]); //, appState.user.username, newConversation.showChatWindow, newMessage, oldMsgId]
+  }, [newMessage]);
 
+  socket.on("my chat", (message) => {
+      console.log('message received', message)
 
+      setMessage({
+        message,
+        mid: message._id !== newMessage.mid ? message._id : newMessage.mid,
+      });
+      // callback({ message: msg });
+    });
+  
   useEffect(() => {
     socket.on("connect", () => {
       console.log("client connected");
@@ -114,19 +125,19 @@ export default function Home({ userSession }) {
     socket.on("connect_error", (err) => {
       console.log("client connection error", err);
     });
-
-    if (socket.connected) {
-      setInterval(() => {
-        socket.emit("is online", { username });
-      }, 10000);
+    if (appState.user.isLoggedIn) {
+      if (socket.connected) {
+        setInterval(() => {
+          socket.emit("is online", { username: appState.user.username });
+        }, 10000);
+      }
     }
-
     socket.on("is online", (user) => {
-      isOnline = setOnline({ online: true, username: user.username });
+      setOnline({ online: true, username: user.username });
     });
 
-    socket.on("my-chat", (message) => {
-      // console.log('message received', msg)
+    socket.on("my chat", (message) => {
+      console.log('message received', message)
 
       setMessage({
         message,
@@ -135,10 +146,19 @@ export default function Home({ userSession }) {
       // callback({ message: msg });
     });
 
+    if (socket.connected) {
+      connectSocket(appState.user.username);
+    }
+
     socket.on("disconnect", () => {
-      console.log("disconnected");
+      console.log("disconnected client");
     });
-  }, []);
+
+    return () => {
+      console.log("unmounting...");
+      socket.disconnect();
+    };
+  }, [appState.user.isLoggedIn]);
 
   // const connectToSocket = useCallback(() => {
   //   console.log('calling connect from callback');
@@ -157,7 +177,7 @@ export default function Home({ userSession }) {
   //       socket.connected ? "" : connectToSocket();
   //     }, 10000)
   //   }
-    
+
   //   return () => clearInterval(soct);
   // }, [socket.connected])
 
@@ -210,7 +230,7 @@ export default function Home({ userSession }) {
   //
   // }, [appState.user.isLoggedIn]);
 
-  if(userSession.holdRendering && !appState.user.isLoggedIn) {
+  if (userSession.holdRendering && !appState.user.isLoggedIn) {
     return null;
   } else {
     return (
@@ -220,7 +240,10 @@ export default function Home({ userSession }) {
             <title>Hey! Messenger</title>
             <meta name="description" content="Hey Messenger" />
             <link id="favicon" rel="icon" href="/favicon.png" />
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome-min.css" />
+            <link
+              rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome-min.css"
+            />
           </Head>
 
           <div className="main">
@@ -231,10 +254,9 @@ export default function Home({ userSession }) {
               dispatch={dispatch}
             />
           </div>
-
         </div>
       </Layout>
-    )
+    );
   }
 }
 
@@ -248,7 +270,9 @@ export const getServerSideProps = withIronSessionSsr(
     // console.log('user session...', user)
     return {
       props: {
-        userSession: { ...user, holdRendering: true }
-      }
-    }
-  }, sessionOptions);
+        userSession: { ...user, holdRendering: true },
+      },
+    };
+  },
+  sessionOptions
+);

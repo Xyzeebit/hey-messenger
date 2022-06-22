@@ -1,8 +1,9 @@
-// import { socket } from '../lib/init-socket';
+import { socket } from '../lib/socket';
 import { nanoid } from 'nanoid';
-import io from "socket.io-client";
+//import io from "socket.io-client";
 
-const socket = io("/");
+//const socket = io("/");
+let dispatchCount = 0;
 
 export const initialState = {
   contacts: [],
@@ -49,16 +50,18 @@ function contactsReducer(state, action) {
       return state;
 
     case 'ADD_MESSAGE':
+	  
       if(action.owner === action.message.from || action.owner === action.message.to) {
         if(action.message.from !== action.message.to) {
           contact = state.find(c => c.username === action.message.to);
           let sender = state.find(c => c.username === action.message.from);
-
+		  console.log('adding message', dispatchCount++);
+		
           if(contact) {
             // index = state.indexOf(contact);
             contact.messages.push(action.message);
             contact.lastSent = action.message.text;
-            // state[index] = contact;
+			
           }
           if(sender) {
             // index = state.indexOf(sender);

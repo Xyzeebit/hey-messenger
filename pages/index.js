@@ -17,12 +17,13 @@ import { ContactList } from "../components/Contact";
 import ChatWindow from "../components/ChatWindow";
 import { Spinner } from '../components/form-components';
 import { appReducer, initialState } from "../reducer/reducers";
+import { socket } from '../lib/socket';
 import StateContext from "../components/StateContext";
 
 
-import io from "socket.io-client";
+//import io from "socket.io-client";
 
-const socket = io("/");
+//const socket = io("/");
 
 export default function Home() {
   const [state, dispatch] = useReducer(appReducer, initialState);
@@ -83,7 +84,8 @@ export default function Home() {
     }
   }, [isOnline.username]);
 
-  const sendMessage = useCallback(() => {
+  const sendMessage = () => {
+	console.log('sending dispatch message')
     const { mid, message } = newMessage;
     if (mid !== oldMsgId) {
       dispatch({
@@ -94,25 +96,33 @@ export default function Home() {
       });
       setOldMsgId(mid);
       if (appState.user.username === message.from) {
-        writeMessage(newConversation.username, message, (resp) => {
-          // console.log('writing message status', resp)
-        });
+        //writeMessage(newConversation.username, message, (resp) => {
+          //console.log('writing message status', resp)
+        //});
       }
     }
-  }, [oldMsgId, newMessage]);
+  }
+  
 
   useEffect(() => {
-    sendMessage();
-  }, [newMessage]);
-
-  socket.on("my chat", (message) => {
-      console.log('message received', message)
-
-      setMessage({
+	console.log('adding message effect');
+    const { mid, message } = newMessage;
+    if (mid !== oldMsgId) {
+	  console.log('old id: ' + oldMsgId + ' new id: ' + mid + ' message: ' + message.text);
+      dispatch({
+        type: "ADD_MESSAGE",
         message,
-        mid: message._id !== newMessage.mid ? message._id : newMessage.mid,
+        owner: appState.user.username,
+        isOpen: newConversation.showChatWindow,
       });
-  });
+      setOldMsgId(mid);
+      //if (appState.user.username === message.from) {
+        //writeMessage(newConversation.username, message, (resp) => {
+          //console.log('writing message status', resp)
+        //});
+      //}
+    }
+  }, [newMessage]);
 
   const rooms = useMemo(() => {
     let rm = [];
@@ -132,10 +142,11 @@ export default function Home() {
     socket.on("connect_error", (err) => {
       console.log("client connection error", err);
     });
-
+	
+	let isOnlineInterval;
     if (appState.user.isLoggedIn) {
       if (socket.connected) {
-        setInterval(() => {
+        isOnlineInterval = setInterval(() => {
           socket.emit("is online", { username: appState.user.username });
         }, 10000);
       }
@@ -146,11 +157,17 @@ export default function Home() {
     });
 
     socket.on("my chat", (message) => {
-
-      setMessage({
-        message,
-        mid: message._id !== newMessage.mid ? message._id : newMessage.mid,
-      });
+		//console.log('received message', message);
+		//setMessage({
+          //message,
+          //mid: message._id !== newMessage.mid ? message._id : newMessage.mid,
+       //});
+	   if(oldMsgId !== message._id) {
+		  setMessage({
+			message,
+			mid: message._id !== newMessage.mid ? message._id : newMessage.mid,
+		});
+	   }
     });
 
     
@@ -159,11 +176,11 @@ export default function Home() {
       console.log("joining rooms", myRooms);
     });
 
-    if (socket.connected) {
+    //if (socket.connected) {
       // connect socket to rooms
       // console.log('my rooms', rooms);
-      socket.emit("rooms", rooms);
-    }
+      //socket.emit("rooms", rooms);
+    //}
 
     socket.on("disconnect", () => {
       console.log("disconnected client");
@@ -171,9 +188,18 @@ export default function Home() {
 
     return () => {
       console.log("unmounting...");
+	  clearInterval(isOnlineInterval);
       // socket.disconnect();
     };
-  }, [appState.user.isLoggedIn, rooms]);
+  }, [appState.user.isLoggedIn]);
+  
+  useEffect(() => {
+	if (socket.connected) {
+      // connect socket to rooms
+      console.log('my rooms', rooms);
+      socket.emit("rooms", rooms);
+	}
+  }, [rooms, socket.connected]);
 
 
   // useEffect(() => {

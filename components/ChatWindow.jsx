@@ -8,7 +8,9 @@ let chatRef;
 export default function ChatWindow ({ contact, owner, dispatch }) {
   const { name, chatId, username, id, profilePhoto, messages, showChatWindow } = contact;
   const contactMessages = messages[chatId];
-
+  if(chatRef) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+  }
 
   return (
     <div className="chat__window"

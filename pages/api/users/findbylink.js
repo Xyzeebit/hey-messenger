@@ -15,7 +15,6 @@ export default async function handler(req, res) {
         imageUrl: user.profilePhoto,
         successful: true,
       };
-      console.log(_user);
 
       res.json(_user);
     } else {

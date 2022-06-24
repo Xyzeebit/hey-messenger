@@ -96,22 +96,25 @@
     margin: 1rem 0;
   }
   .invite_group {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    //display: flex;
+    //justify-content: space-between;
+    //align-items: center;
     border: 1px solid $gray;
-    padding: 0.2rem;
+    //padding: 0.2rem;
     -webkit-border-radius: 20px;
     border-radius: 20px;
   }
   .user_link {
     font-size: 0.7rem;
-    padding: 0 2px 0 2px;
+    padding: 7px 2px 0 5px;
     // background: $primary;
     overflow-x: auto;
+	float: left;
   }
   .copy_link__button {
-    margin-left: 0.2rem;
+    //margin-left: 0.2rem;
+	margin: 3px;
+	float: right;
     padding: 5px 15px 5px 15px;
     background: $gray;
     color: $white;

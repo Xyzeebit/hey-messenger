@@ -78,21 +78,19 @@
   margin: 1rem 0;
 }
 .profile_page__main .invite_group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   border: 1px solid grey;
-  padding: 0.2rem;
   -webkit-border-radius: 20px;
   border-radius: 20px;
 }
 .profile_page__main .user_link {
   font-size: 0.7rem;
-  padding: 0 2px 0 2px;
+  padding: 7px 2px 0 5px;
   overflow-x: auto;
+  float: left;
 }
 .profile_page__main .copy_link__button {
-  margin-left: 0.2rem;
+  margin: 3px;
+  float: right;
   padding: 5px 15px 5px 15px;
   background: grey;
   color: #fff;

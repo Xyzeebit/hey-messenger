@@ -1,9 +1,6 @@
 import { socket } from '../lib/socket';
 import { nanoid } from 'nanoid';
-//import io from "socket.io-client";
 
-//const socket = io("/");
-let dispatchCount = 0;
 
 export const initialState = {
   contacts: [],
@@ -50,32 +47,35 @@ function contactsReducer(state, action) {
       return state;
 
     case 'ADD_MESSAGE':
-	  
+	  if(action.oldMsgId === action.message._id) return state;
       if(action.owner === action.message.from || action.owner === action.message.to) {
         if(action.message.from !== action.message.to) {
           contact = state.find(c => c.username === action.message.to);
           let sender = state.find(c => c.username === action.message.from);
-		  console.log('adding message', dispatchCount++);
 		
           if(contact) {
             // index = state.indexOf(contact);
-            contact.messages.push(action.message);
-            contact.lastSent = action.message.text;
-			
+			if(!inMessages(contact.messages, action.message._id)) {
+				contact.messages.push(action.message);
+				contact.lastSent = action.message.text;
+			}
           }
           if(sender) {
             // index = state.indexOf(sender);
-            sender.messages.push(action.message);
-            if(action.isOpen) {
-              sender.notifications = 0
-            } else {
-              sender.notifications++;
-            }
+			if(!inMessages(sender.messages, action.message._id)) {
+				sender.messages.push(action.message);
+				if(action.isOpen) {
+					sender.notifications = 0
+				} else {
+					sender.notifications++;
+				}
+			}
+            
             // state[index] = sender;
           }
         }
       }
-
+	 
       return state;
 
     case 'UPDATE_CHATS':
@@ -155,4 +155,10 @@ export function appReducer(state, action) {
     newConversation: newConversationReducer(state.newConversation, action),
     contacts: contactsReducer(state.contacts, action)
   }
+}
+
+function inMessages(messages, id) {
+	const msg = messages.find(m => m._id === id);
+	if(msg) return true;
+	return false;
 }

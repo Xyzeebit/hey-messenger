@@ -1,4 +1,4 @@
-import { useState, useReducer, useRef, useEffect, useContext } from 'react';
+import { useState, useReducer, useRef, useEffect, useContext, memo } from 'react';
 // import dynamic from 'next/dynamic'
 // const Picker = dynamic(() => import('emoji-picker-react'), { ssr: false })
 // import Picker from 'emoji-picker-react';
@@ -7,10 +7,6 @@ let chatRef;
 
 export default function ChatWindow ({ contact, owner, dispatch }) {
   const { name, chatId, username, id, profilePhoto, messages, showChatWindow } = contact;
-  const contactMessages = messages[chatId];
-  if(chatRef) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-  }
 
   return (
     <div className="chat__window"
@@ -57,7 +53,7 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
         <span>{name}</span>
       </div>
 
-      <div className="chat__bar--right">
+      {/*<div className="chat__bar--right">
         <button className="bar__button" onClick={handleCloseChat}>
           <img
             src="/icon-call.svg"
@@ -76,7 +72,7 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
             className="bar__icon icon__video"
           />
         </button>
-      </div>
+      </div>*/}
     </div>
   );
 }
@@ -167,6 +163,11 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
 
 const Chats = ({ chats, owner }) => {
   chatRef = useRef();
+  if(chatRef) {
+      try {
+		  chatRef.current.scrollTop = chatRef.current.scrollHeight;
+	  } catch(e) {}
+  }
   return (
     <div className="chats" ref={chatRef}>
       {chats.length > 0 && chats.map(chat => {

@@ -1,9 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useContext } from "react";
 import StateContext from "../components/StateContext";
-import io from "socket.io-client";
-
-let socket = io("/");
+import { socket } from '../lib/socket';;
 
 export default function Logout() {
   const router = useRouter();
@@ -13,7 +11,7 @@ export default function Logout() {
     const resp = await fetch("api/logout");
     const { isLoggedIn } = await resp.json();
     if (isLoggedIn) {
-      // shuld throw err
+      // should throw err
     } else {
       setAppState({
         ...appState,
@@ -36,7 +34,7 @@ export default function Logout() {
       socket.removeAllListeners("is online");
       socket.removeAllListeners("my chat");
       socket.removeAllListeners("rooms");
-      socket = null;
+      //socket = null;
     } else {
       console.log('socket is not connected')
     }

@@ -20,10 +20,7 @@ import { appReducer, initialState } from "../reducer/reducers";
 import { socket } from '../lib/socket';
 import StateContext from "../components/StateContext";
 
-
-//import io from "socket.io-client";
-
-//const socket = io("/");
+let sendingCount = 0;
 
 export default function Home() {
   const [state, dispatch] = useReducer(appReducer, initialState);
@@ -83,44 +80,25 @@ export default function Home() {
       dispatch({ type: "USERS_ONLINE", username: isOnline.username });
     }
   }, [isOnline.username]);
-
-  const sendMessage = () => {
-	console.log('sending dispatch message')
-    const { mid, message } = newMessage;
-    if (mid !== oldMsgId) {
-      dispatch({
-        type: "ADD_MESSAGE",
-        message,
-        owner: appState.user.username,
-        isOpen: newConversation.showChatWindow,
-      });
-      setOldMsgId(mid);
-      if (appState.user.username === message.from) {
-        //writeMessage(newConversation.username, message, (resp) => {
-          //console.log('writing message status', resp)
-        //});
-      }
-    }
-  }
   
 
   useEffect(() => {
-	console.log('adding message effect');
     const { mid, message } = newMessage;
     if (mid !== oldMsgId) {
-	  console.log('old id: ' + oldMsgId + ' new id: ' + mid + ' message: ' + message.text);
       dispatch({
         type: "ADD_MESSAGE",
         message,
+		oldMsgId,
         owner: appState.user.username,
         isOpen: newConversation.showChatWindow,
       });
       setOldMsgId(mid);
-      //if (appState.user.username === message.from) {
-        //writeMessage(newConversation.username, message, (resp) => {
+	  sendingCount = 0;
+      if (appState.user.username === message.from) {
+        writeMessage(newConversation.username, message, (resp) => {
           //console.log('writing message status', resp)
-        //});
-      //}
+        });
+      }
     }
   }, [newMessage]);
 
@@ -157,12 +135,9 @@ export default function Home() {
     });
 
     socket.on("my chat", (message) => {
-		//console.log('received message', message);
-		//setMessage({
-          //message,
-          //mid: message._id !== newMessage.mid ? message._id : newMessage.mid,
-       //});
-	   if(oldMsgId !== message._id) {
+		
+	   if(oldMsgId !== message._id && sendingCount++ < 1) {
+		  
 		  setMessage({
 			message,
 			mid: message._id !== newMessage.mid ? message._id : newMessage.mid,

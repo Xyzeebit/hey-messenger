@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     } else {
       res.json({ successful: false });
     }
+  } else {
+	  //res.json({ successful: false });
   }
-
-  res.end();
 }

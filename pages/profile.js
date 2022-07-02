@@ -44,16 +44,16 @@ export default function Profile() {
 
     if(navigator.clipboard) {
       try {
-        navigator.clipboard.writeText(
-          location.href.substring(0, window.location.href.lastIndexOf('/')) +
-          '/follow?link=' + appState.user.link
-        );
+        navigator.clipboard.writeText(copyText);
       } catch (e) {
 
       } finally {
         setCopyText('copied');
         setTimeout(() => {
-          setCopyText('copy');
+          setCopyText(
+			location.href.substring(0, window.location.href.lastIndexOf('/')) +
+          '/follow?link=' + appState.user.link
+		  );
         }, 800);
       }
     }
@@ -128,7 +128,14 @@ export default function Profile() {
     if(file) {
       setCreateObjectURL(URL.createObjectURL(file))
     }
-  }, [file])
+  }, [file]);
+  
+  useEffect(() => {
+	  if(appState.user.isLoggedIn) {
+		  setCopyText(location.href.substring(0, window.location.href.lastIndexOf('/')) +
+          '/follow?link=' + appState.user.link);
+	  }
+  }, [appState.user.isLoggedIn]);
 
   const handleFileChange = evt => {
     const fileLimit = 78;
@@ -307,11 +314,11 @@ const ProfileDetail = ({ label, value, onEdit, visible }) => {
 
 const InviteFriend = ({ link, copyText, onClick }) => (
   <div className="invite_friend">
-    <span className="share_link__text">Share link to invite friends</span>
+    <span className="share_link__text">Copy and share link with friends</span>
     <div className="invite_group">
-      <span className="user_link">{link}</span>
+      
       <button className="copy_link__button" onClick={onClick}>
-        {copyText}
+        <span>{copyText}</span>
       </button>
     </div>
   </div>

@@ -15,6 +15,7 @@ import { writeMessage } from "../lib/write-message";
 import Layout from "../components/Layout";
 import { ContactList } from "../components/Contact";
 import ChatWindow from "../components/ChatWindow";
+import Notice from '../components/ChatWindow';
 import { Spinner } from '../components/form-components';
 import { appReducer, initialState } from "../reducer/reducers";
 import { socket } from '../lib/socket';
@@ -148,7 +149,7 @@ export default function Home() {
     
 
     socket.on("rooms", (myRooms) => {
-      console.log("joining rooms", myRooms);
+      //console.log("joining rooms", myRooms);
     });
 
     //if (socket.connected) {
@@ -171,7 +172,7 @@ export default function Home() {
   useEffect(() => {
 	if (socket.connected) {
       // connect socket to rooms
-      console.log('my rooms', rooms);
+      //console.log('my rooms', rooms);
       socket.emit("rooms", rooms);
 	}
   }, [rooms, socket.connected]);
@@ -199,12 +200,22 @@ export default function Home() {
           </Head>
 
           <div className="main">
-            <ContactList contacts={contacts} dispatch={dispatch} />
-            <ChatWindow
-              contact={newConversation}
-              owner={appState.user.username}
-              dispatch={dispatch}
-            />
+		  {appState.user.contacts.length > 0 ? 
+			<>
+				<ContactList contacts={contacts} dispatch={dispatch} />
+				<ChatWindow
+					contact={newConversation}
+					owner={appState.user.username}
+					dispatch={dispatch}
+				/>
+
+			</> :
+			
+			<div className="notice">
+				<h4>You do not have any contacts in your contact list. To add contact, go to your profile page to get your <span>profile</span> link</h4>
+			</div>
+		  }
+			
           </div>
         </div>
       </Layout>

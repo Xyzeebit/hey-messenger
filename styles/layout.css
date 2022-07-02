@@ -87,4 +87,21 @@ body {
   position: relative;
 }
 
+.notice {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #666666c4;
+  height: 100vh;
+  line-height: 1.5;
+  text-align: center;
+  padding: 0 3rem 0 3rem;
+}
+.notice span {
+  background: #666;
+  padding: 3px 5px 3px 5px;
+  border-radius: 5px;
+  color: #e3e2e7;
+}
+
 /*# sourceMappingURL=layout.css.map */

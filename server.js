@@ -17,9 +17,9 @@ app.prepare()
 
 
 
-    // const peerServer = ExpressPeerServer(server, { debug: true });
+     const peerServer = ExpressPeerServer(server, { debug: true });
 
-    // server.use('/peerjs', peerServer);
+     server.use('/peerjs', peerServer);
 
     // server.use(express.urlencoded({ extended: true }));
     // server.use(express.json());
@@ -36,30 +36,29 @@ app.prepare()
     const io = new Server(listener);
 
     server.all('*', (req, res) => {
-      // req.io = io;
       return handle(req, res);
     });
 
-    // communicator(io, ["im5sHe_40buj_I2"]);
     communicator(io);
 
 
-    // const peerExpress = require('express');
-    // const peerApp = peerExpress();
-    // const peerServer = require('http').createServer(peerApp);
-    // peerApp.use('/hey', ExpressPeerServer(peerServer, { debug: true }));
-    // peerServer.listen(3001);
-    //
-    // peerServer.on('connection', client => {
-    //   console.log('peer client connected to server');
-    //
-    //   // client.on('data', data => {
-    //   //
-    //   // })
-    // });
-    // peerServer.on('disconnect', client => {
-    //   console.log('peer client disconnected from server');
-    // });
+    /*const peerExpress = require('express');
+    const peerApp = peerExpress();
+    const peerServer = require('http').createServer(peerApp);
+    peerApp.use('/hey', ExpressPeerServer(peerServer, { debug: true }));
+    peerServer.listen(3001);
+    
+    peerServer.on('connection', client => {
+		console.log('peer client connected to server');
+    
+		client.on('data', data => {
+  
+		})
+    });
+    peerServer.on('disconnect', client => {
+		console.log('peer client disconnected from server');
+    });*/
+	
   })
   .catch((error) => {
     console.log(error);

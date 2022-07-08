@@ -182,6 +182,21 @@ export default function Home() {
   //   window.addEventListener('visibilitychange', visibleHandler);
   //   return () => window.removeEventListener('visibilitychange', visibleHandler);
   // }, []);
+  
+  useEffect( async() => {
+	  const Peer = (await import('peerjs')).default;
+	  const myPeer = new Peer(undefined, {
+		  path: '/peerjs',
+		  host: '/',
+		  port: '3000',
+		  debug: 3
+	  });
+	  myPeer.on('open', id => {
+		  console.log('my peer opened');
+		  // socket.emit('join-meet', {});
+	  });
+	  // declare video document
+  }, []);
 
   if (loading) {
     return (

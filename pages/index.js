@@ -186,9 +186,9 @@ export default function Home() {
   useEffect( async() => {
 	  const Peer = (await import('peerjs')).default;
 	  const myPeer = new Peer(undefined, {
-		  path: '/peerjs',
+		  path: '/hey',
 		  host: '/',
-		  port: '3000',
+		  port: '3001',
 		  debug: 3
 	  });
 	  myPeer.on('open', id => {

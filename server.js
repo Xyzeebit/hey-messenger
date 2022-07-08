@@ -1,7 +1,7 @@
 const express = require('express');
 const next = require('next');
 
-// const { ExpressPeerServer, PeerServer } = require('peer');
+const { ExpressPeerServer, PeerServer } = require('peer');
 
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -17,9 +17,9 @@ app.prepare()
 
 
 
-     const peerServer = ExpressPeerServer(server, { debug: true });
+    // const peerServer = ExpressPeerServer(server, { debug: true });
 
-     server.use('/peerjs', peerServer);
+    // server.use('/peerjs', peerServer);
 
     // server.use(express.urlencoded({ extended: true }));
     // server.use(express.json());
@@ -42,7 +42,7 @@ app.prepare()
     communicator(io);
 
 
-    /*const peerExpress = require('express');
+    const peerExpress = require('express');
     const peerApp = peerExpress();
     const peerServer = require('http').createServer(peerApp);
     peerApp.use('/hey', ExpressPeerServer(peerServer, { debug: true }));
@@ -57,7 +57,7 @@ app.prepare()
     });
     peerServer.on('disconnect', client => {
 		console.log('peer client disconnected from server');
-    });*/
+    });
 	
   })
   .catch((error) => {

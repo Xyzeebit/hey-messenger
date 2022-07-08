@@ -6,7 +6,12 @@ nav.navbar {
   justify-content: space-between;
   align-items: center;
   @include mobile {
+    padding: 0.8rem 1rem 0.8rem 1rem;
+  }
+  @include tablet {
+	@include mobile {
     padding: 0.8rem 1.5rem 0.8rem 1.5rem;
+  }
   }
   @include tablet {
     padding: 1rem 3rem 1rem 3rem;
@@ -53,19 +58,23 @@ nav.navbar {
     outline: none;
     border: none;
     background: none;
-    padding: 0.5rem;
     cursor: pointer;
     transition: all 300ms ease;
     font-weight: 700;
     @include mobile {
-
+		font-size: 0.8rem;
+		padding: 0.2rem;
     }
     @include tablet {
       font-size: 1rem;
+	  padding: 0.5rem;
     }
     &:hover {
       color: $accent;
     }
+  }
+  &:not(.active) {
+	color: lighten(black, 20%);
   }
   .active {
     color: $accent;

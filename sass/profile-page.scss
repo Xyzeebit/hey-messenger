@@ -99,7 +99,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid $gray;
     margin: 0.3rem 0 0 0;
     -webkit-border-radius: 20px;
     border-radius: 20px;
@@ -117,7 +116,7 @@
 	font-size: 0.7rem;
 	overflow-x: auto;
 	padding: 5px;
-    border: none;
+    border: 2px solid $primary;
     outline: none;
     transition: all 300ms ease;
     border-radius: 20px;
@@ -162,6 +161,7 @@
       font-style: italic;
       width: 60%;
       font-size: 1.3rem;
+	  overflow: hidden;
     }
     .input {
       input {

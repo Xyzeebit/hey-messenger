@@ -5,6 +5,11 @@ nav.navbar {
 }
 @media screen and (min-width: 320px) {
   nav.navbar {
+    padding: 0.8rem 1rem 0.8rem 1rem;
+  }
+}
+@media screen and (min-width: 811px) and (min-width: 320px) {
+  nav.navbar {
     padding: 0.8rem 1.5rem 0.8rem 1.5rem;
   }
 }
@@ -57,18 +62,27 @@ nav.navbar .menu__item {
   outline: none;
   border: none;
   background: none;
-  padding: 0.5rem;
   cursor: pointer;
   transition: all 300ms ease;
   font-weight: 700;
 }
+@media screen and (min-width: 320px) {
+  nav.navbar .menu__item {
+    font-size: 0.8rem;
+    padding: 0.2rem;
+  }
+}
 @media screen and (min-width: 811px) {
   nav.navbar .menu__item {
     font-size: 1rem;
+    padding: 0.5rem;
   }
 }
 nav.navbar .menu__item:hover {
   color: #239644;
+}
+nav.navbar:not(.active) {
+  color: #333333;
 }
 nav.navbar .active {
   color: #239644;

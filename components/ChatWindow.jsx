@@ -1,4 +1,4 @@
-import { useState, useReducer, useRef, useEffect, useContext, memo } from 'react';
+import { useState, useReducer, useRef, useEffect, useContext, memo, useMemo, useCallback } from 'react';
 // import dynamic from 'next/dynamic'
 // const Picker = dynamic(() => import('emoji-picker-react'), { ssr: false })
 // import Picker from 'emoji-picker-react';
@@ -30,7 +30,7 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
 				</>
 				: (mediaType === VIDEO) ?
 					<Video setMediaType={setMediaType} />
-				:	<Audio setMediaType={setMediaType} />
+				:	<Audio setMediaType={setMediaType} photo={profilePhoto} />
 			}
           </div>
         </>
@@ -42,6 +42,13 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
 const ChatBar = ({ name, photo, setMediaType, showChatWindow, dispatch }) => {
   const handleCloseChat = () => {
 	setMediaType(TEXT);
+	if(cameraStream) {
+		
+		if(cameraStream.state == 'recording') {
+			cameraStream.stop();
+		}
+		cameraStream.getTracks().forEach(track => track.stop());
+	}
     dispatch({ type: 'CLOSE_CHAT_WINDOW', showChatWindow: false });
   }
   const handleAudioCall = () => {
@@ -215,31 +222,57 @@ function ChatBubble({ message, time, self }) {
   <span className="message__time">{time}</span></span>
 }
 
-function Video({ setMediaType }) {
+function Video({ setMediaType, /* stream */ }) {
+	const [answered, setAnswered] = useState(false);
+	let video, subVideo;
 	const handleEndVideoCall = () => {
-		//mediaRecorder.stop();
+		if(cameraStream.state == 'recording') {
+			cameraStream.stop();
+		}
 		cameraStream.getTracks().forEach(track => track.stop());
+		clearTimeout(callTimeout);
 		setMediaType(TEXT);
 	}
 	
+	const dataAvailable = evt => blobsRecorded.push(evt.data);
+	
+	const callTimeout = setTimeout(() => {
+		setAnswered(true);
+	}, 10000);
+	
 	useEffect(async () => {
 		cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-		let video = document.getElementById('main-video');
-		video.srcObject = cameraStream;
+		video = document.getElementById('main-video');
+		subVideo = document.getElementById('sub-video');
+		video.srcObject = cameraStream; // use stream here
+		subVideo.srcObject = cameraStream;
 		
 		mediaRecorder = new MediaRecorder(cameraStream, { mimeTypes: 'video/webm' });
-		mediaRecorder.addEventListener('dataavailable', evt => {
-			blobsRecorded.push(evt.data);
-		});
+		mediaRecorder.addEventListener('dataavailable', dataAvailable);
 		mediaRecorder.addEventListener('stop', handleEndVideoCall);
 		
-		return () => cameraStream = null;
+		
+		return () => {
+			removeEventListener('dataavailable', dataAvailable);
+			removeEventListener('stop', handleEndVideoCall);
+			cameraStream = null;
+			mediaRecorder = null;
+			blobsRecorded = [];
+		}
 	}, []);
+	
+	useEffect(() => {
+		if(answered) {
+			document.getElementById('sub-video').classList.add('sub_video__resized');
+		}
+	}, [answered]);
 	
 	return(
 		<div className="video_call__container">
-			<video id="main-video" autoPlay muted>
-				{/*<source src="/movie.mp4" type="video/mp4" />*/}
+			<video id="main-video" autoPlay>
+                your browser does not support the video tag
+			</video>
+			<video id="sub-video" autoPlay muted>
                 your browser does not support the video tag
 			</video>
 			<div className="call_end__container">
@@ -251,18 +284,54 @@ function Video({ setMediaType }) {
 						height="50"
 					/>
 				</button>
+				{answered && <Timer /> }
 			</div>
 		</div>
 	);
 }
 
-function Audio({ setMediaType }) {
+const Timer = () => {
+	let sec = 0, mm = 0, hr = 0;
+	useEffect(() => {
+		let p = document.getElementById('time-counter')
+		const timer = setInterval(() => {
+			if(sec < 59) {
+				sec++
+			} else {
+				sec = 0;
+				if(mm < 59) {
+					mm++;
+				} else {
+					mm = 0
+					hr++;
+				}
+			}
+			p.innerText = `${hr < 10 ? '0' + hr : hr}:${mm < 10 ? '0' + mm : mm}:${sec < 10 ? '0' + sec : sec}`
+		
+		}, 1000);
+		
+		return () => clearInterval(timer);
+	}, [sec]);
+	
+	return <p id="time-counter">00:00:00</p>
+};
+
+function Audio({ setMediaType, photo }) {
 	const handleEndAudioCall = () => {
 		setMediaType(TEXT);
 	}
 	return (
 		<div className="audio_call__container">
 			<h1>Audio call</h1>
+			<article>
+				<img 
+					src={photo}
+					alt=""
+					width="150"
+					height="150"
+				/>
+			</article>
+			<Timer />
 			<div className="call_end__container">
 				<button onClick={handleEndAudioCall}>
 					<img 

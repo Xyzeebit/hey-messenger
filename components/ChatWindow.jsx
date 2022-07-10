@@ -218,8 +218,11 @@ function Video({ setMediaType }) {
 	}
 	return(
 		<div className="video_call__container">
-			<video id="main-video"></video>
-			<div className="call_end_container">
+			<video id="main-video" controls>
+				<source src="/movie.mp4" type="video/mp4" />
+                your browser does not support the video tag
+			</video>
+			<div className="call_end__container">
 				<button onClick={handleEndVideoCall}>
 					<img 
 						src="/icon-end-call.svg"
@@ -240,7 +243,7 @@ function Audio({ setMediaType }) {
 	return (
 		<div className="audio_call__container">
 			<h1>Audio call</h1>
-			<div className="call_end_container">
+			<div className="call_end__container">
 				<button onClick={handleEndAudioCall}>
 					<img 
 						src="/icon-end-call.svg"

@@ -5,6 +5,9 @@ import { useState, useReducer, useRef, useEffect, useContext, memo } from 'react
 
 let chatRef;
 const TEXT = 0, VIDEO = 1, AUDIO = 2;
+let cameraStream = null;
+let mediaRecorder = null;
+let blobsRecorded = [];
 
 
 export default function ChatWindow ({ contact, owner, dispatch }) {
@@ -214,12 +217,29 @@ function ChatBubble({ message, time, self }) {
 
 function Video({ setMediaType }) {
 	const handleEndVideoCall = () => {
+		//mediaRecorder.stop();
+		cameraStream.getTracks().forEach(track => track.stop());
 		setMediaType(TEXT);
 	}
+	
+	useEffect(async () => {
+		cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+		let video = document.getElementById('main-video');
+		video.srcObject = cameraStream;
+		
+		mediaRecorder = new MediaRecorder(cameraStream, { mimeTypes: 'video/webm' });
+		mediaRecorder.addEventListener('dataavailable', evt => {
+			blobsRecorded.push(evt.data);
+		});
+		mediaRecorder.addEventListener('stop', handleEndVideoCall);
+		
+		return () => cameraStream = null;
+	}, []);
+	
 	return(
 		<div className="video_call__container">
-			<video id="main-video" controls>
-				<source src="/movie.mp4" type="video/mp4" />
+			<video id="main-video" autoPlay muted>
+				{/*<source src="/movie.mp4" type="video/mp4" />*/}
                 your browser does not support the video tag
 			</video>
 			<div className="call_end__container">

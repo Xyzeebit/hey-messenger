@@ -4,8 +4,11 @@ import { useState, useReducer, useRef, useEffect, useContext, memo } from 'react
 // import Picker from 'emoji-picker-react';
 
 let chatRef;
+const TEXT = 0, VIDEO = 1, AUDIO = 2;
+
 
 export default function ChatWindow ({ contact, owner, dispatch }) {
+  const [mediaType, setMediaType] = useState(TEXT);
   const { name, chatId, username, id, profilePhoto, messages, showChatWindow } = contact;
 
   return (
@@ -14,11 +17,18 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
     >
       { id &&
         <>
-          <ChatBar name={name} photo={profilePhoto}
+          <ChatBar name={name} photo={profilePhoto} setMediaType={setMediaType}
             showChatWindow={showChatWindow} dispatch={dispatch} />
           <div className="chats__container">
-            {<Chats chats={messages} owner={owner} />}
-            <InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
+            {mediaType === TEXT ?
+				<>
+					<Chats chats={messages} owner={owner} />
+					<InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
+				</>
+				: (mediaType === VIDEO) ?
+					<Video setMediaType={setMediaType} />
+				:	<Audio setMediaType={setMediaType} />
+			}
           </div>
         </>
       }
@@ -26,10 +36,20 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
   );
 }
 
-const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
+const ChatBar = ({ name, photo, setMediaType, showChatWindow, dispatch }) => {
   const handleCloseChat = () => {
+	setMediaType(TEXT);
     dispatch({ type: 'CLOSE_CHAT_WINDOW', showChatWindow: false });
   }
+  const handleAudioCall = () => {
+	  console.log('audio calls');
+	  setMediaType(AUDIO);
+  }
+  const handleVideoCall = () => {
+	  console.log('video calls');
+	  setMediaType(VIDEO);
+  }
+  
   return (
     <div className="chat__bar">
       <div className="chat__bar--left">
@@ -53,8 +73,8 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
         <span>{name}</span>
       </div>
 
-      {/*<div className="chat__bar--right">
-        <button className="bar__button" onClick={handleCloseChat}>
+      {<div className="chat__bar--right">
+        <button className="bar__button" onClick={handleAudioCall}>
           <img
             src="/icon-call.svg"
             alt="go back"
@@ -63,7 +83,7 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
             className="bar__icon icon__call"
           />
         </button>
-        <button className="bar__button" onClick={handleCloseChat}>
+        <button className="bar__button" onClick={handleVideoCall}>
           <img
             src="/icon-video.svg"
             alt="go back"
@@ -72,7 +92,7 @@ const ChatBar = ({ name, photo, showChatWindow, dispatch }) => {
             className="bar__icon icon__video"
           />
         </button>
-      </div>*/}
+      </div>}
     </div>
   );
 }
@@ -190,4 +210,46 @@ function Message({ message, time, sender, owner }) {
 function ChatBubble({ message, time, self }) {
   return <span className={`bubble ${self ? 'in' : 'out'}`}>{message}
   <span className="message__time">{time}</span></span>
+}
+
+function Video({ setMediaType }) {
+	const handleEndVideoCall = () => {
+		setMediaType(TEXT);
+	}
+	return(
+		<div className="video_call__container">
+			<video id="main-video"></video>
+			<div className="call_end_container">
+				<button onClick={handleEndVideoCall}>
+					<img 
+						src="/icon-end-call.svg"
+						alt=""
+						width="50"
+						height="50"
+					/>
+				</button>
+			</div>
+		</div>
+	);
+}
+
+function Audio({ setMediaType }) {
+	const handleEndAudioCall = () => {
+		setMediaType(TEXT);
+	}
+	return (
+		<div className="audio_call__container">
+			<h1>Audio call</h1>
+			<div className="call_end_container">
+				<button onClick={handleEndAudioCall}>
+					<img 
+						src="/icon-end-call.svg"
+						alt=""
+						width="50"
+						height="50"
+					/>
+				</button>
+			</div>
+		</div>
+	);
 }

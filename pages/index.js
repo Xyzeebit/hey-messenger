@@ -195,7 +195,16 @@ export default function Home() {
 		  console.log('my peer opened');
 		  // socket.emit('join-meet', {});
 	  });
+	  
 	  // declare video document
+	  /*navigator.mediaDevices.getUserMedia({
+		  video: true,
+		  audio: true
+	  }).then((stream) => {
+		  myVideoStream = stream;
+		  
+	  });*/
+	  
   }, []);
 
   if (loading) {

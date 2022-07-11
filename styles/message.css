@@ -288,6 +288,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: #e3e2e7;
 }
 .audio_call__container h1 {
   margin-bottom: 30px;
@@ -302,7 +303,7 @@
 }
 .audio_call__container .call_end__container button {
   border-radius: 100px;
-  border: 1px solid #e25151;
+  border: 2px solid #e25151;
   box-shadow: 1px 0px 2px grey;
 }
 .audio_call__container .call_end__container button:hover {

@@ -22,6 +22,7 @@ export function Contact({ id, name, username, profilePhoto,
   return (
     <div className="contact"
       onClick={handleStartChat}
+	  aria-label={`username ${username}`}
     >
         <CircleImage image={profilePhoto} isOnline={isOnline} />
         <div className="contact__name--message">
@@ -39,7 +40,7 @@ export function Contact({ id, name, username, profilePhoto,
   );
 }
 
-export const ContactList = ({ contacts, dispatch }) => {
+export const ContactList = ({ contacts, dispatch, onCall }) => {
   const [appState] = useContext(StateContext);
   useEffect(() => {
     if(appState.user.isLoggedIn) {
@@ -66,10 +67,10 @@ export const ContactList = ({ contacts, dispatch }) => {
   // console.log('finding user contacts', contacts);
 
   return (
-    <div className="contact__list">
+    <div className="contact__list" disabled={onCall} aria-label="My contact list">
       { contacts &&
         contacts.map((contact, i) => (
-          <div key={contact.id}>
+          <div key={contact.id} aria-label={contact.name}>
             <Contact {...contact} dispatch={dispatch} />
             {i < contacts.length - 1 &&
               <div className="contact__divider">

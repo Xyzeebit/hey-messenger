@@ -196,15 +196,6 @@ export default function Home() {
 		  // socket.emit('join-meet', {});
 	  });
 	  
-	  // declare video document
-	  /*navigator.mediaDevices.getUserMedia({
-		  video: true,
-		  audio: true
-	  }).then((stream) => {
-		  myVideoStream = stream;
-		  
-	  });*/
-	  
   }, []);
 
   if (loading) {
@@ -226,7 +217,7 @@ export default function Home() {
           <div className="main">
 		  {appState.user.contacts.length > 0 ? 
 			<>
-				<ContactList contacts={contacts} dispatch={dispatch} />
+				<ContactList contacts={contacts} dispatch={dispatch} onCall={newConversation.onCall} />
 				<ChatWindow
 					contact={newConversation}
 					owner={appState.user.username}

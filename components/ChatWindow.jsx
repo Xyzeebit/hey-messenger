@@ -8,11 +8,12 @@ const TEXT = 0, VIDEO = 1, AUDIO = 2;
 let cameraStream = null;
 let mediaRecorder = null;
 let blobsRecorded = [];
+let audioStream = null;
 
 
 export default function ChatWindow ({ contact, owner, dispatch }) {
   const [mediaType, setMediaType] = useState(TEXT);
-  const { name, chatId, username, id, profilePhoto, messages, showChatWindow } = contact;
+  const { name, chatId, username, id, profilePhoto, messages, showChatWindow, onCall } = contact;
 
   return (
     <div className="chat__window"
@@ -21,7 +22,7 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
       { id &&
         <>
           <ChatBar name={name} photo={profilePhoto} setMediaType={setMediaType}
-            showChatWindow={showChatWindow} dispatch={dispatch} />
+            showChatWindow={showChatWindow} onCall={onCall} dispatch={dispatch} />
           <div className="chats__container">
             {mediaType === TEXT ?
 				<>
@@ -29,8 +30,8 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
 					<InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
 				</>
 				: (mediaType === VIDEO) ?
-					<Video setMediaType={setMediaType} />
-				:	<Audio setMediaType={setMediaType} photo={profilePhoto} />
+					<Video setMediaType={setMediaType} dispatch={dispatch} />
+				:	<Audio setMediaType={setMediaType} photo={profilePhoto} dispatch={dispatch} />
 			}
           </div>
         </>
@@ -39,7 +40,7 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
   );
 }
 
-const ChatBar = ({ name, photo, setMediaType, showChatWindow, dispatch }) => {
+const ChatBar = ({ name, photo, setMediaType, showChatWindow, onCall, dispatch }) => {
   const handleCloseChat = () => {
 	setMediaType(TEXT);
 	if(cameraStream) {
@@ -54,10 +55,12 @@ const ChatBar = ({ name, photo, setMediaType, showChatWindow, dispatch }) => {
   const handleAudioCall = () => {
 	  console.log('audio calls');
 	  setMediaType(AUDIO);
+	  dispatch({ type: 'ON_CALL', onCall: true });
   }
   const handleVideoCall = () => {
 	  console.log('video calls');
 	  setMediaType(VIDEO);
+	  dispatch({ type: 'ON_CALL', onCall: true });
   }
   
   return (
@@ -84,7 +87,7 @@ const ChatBar = ({ name, photo, setMediaType, showChatWindow, dispatch }) => {
       </div>
 
       {<div className="chat__bar--right">
-        <button className="bar__button" onClick={handleAudioCall}>
+        <button className="bar__button" onClick={handleAudioCall} disabled={onCall}>
           <img
             src="/icon-call.svg"
             alt="go back"
@@ -93,7 +96,7 @@ const ChatBar = ({ name, photo, setMediaType, showChatWindow, dispatch }) => {
             className="bar__icon icon__call"
           />
         </button>
-        <button className="bar__button" onClick={handleVideoCall}>
+        <button className="bar__button" onClick={handleVideoCall} disabled={onCall}>
           <img
             src="/icon-video.svg"
             alt="go back"
@@ -222,7 +225,7 @@ function ChatBubble({ message, time, self }) {
   <span className="message__time">{time}</span></span>
 }
 
-function Video({ setMediaType, /* stream */ }) {
+function Video({ setMediaType, dispatch /* stream */ }) {
 	const [answered, setAnswered] = useState(false);
 	let video, subVideo;
 	const handleEndVideoCall = () => {
@@ -232,6 +235,7 @@ function Video({ setMediaType, /* stream */ }) {
 		cameraStream.getTracks().forEach(track => track.stop());
 		clearTimeout(callTimeout);
 		setMediaType(TEXT);
+		dispatch({ type: 'ON_CALL', onCall: false });
 	}
 	
 	const dataAvailable = evt => blobsRecorded.push(evt.data);
@@ -264,12 +268,13 @@ function Video({ setMediaType, /* stream */ }) {
 	useEffect(() => {
 		if(answered) {
 			document.getElementById('sub-video').classList.add('sub_video__resized');
+			document.getElementById('main-video').muted = false;
 		}
 	}, [answered]);
 	
 	return(
 		<div className="video_call__container">
-			<video id="main-video" autoPlay>
+			<video id="main-video" autoPlay muted>
                 your browser does not support the video tag
 			</video>
 			<video id="sub-video" autoPlay muted>
@@ -316,13 +321,48 @@ const Timer = () => {
 	return <p id="time-counter">00:00:00</p>
 };
 
-function Audio({ setMediaType, photo }) {
+function Audio({ setMediaType, photo, dispatch }) {
+	let audio;
+	
 	const handleEndAudioCall = () => {
+		if(audioStream.state == 'recording') {
+			audioStream.stop();
+		}
+		audioStream.getTracks().forEach(track => track.stop());
 		setMediaType(TEXT);
+		dispatch({ type: 'ON_CALL', onCall: false });
 	}
+	
+	const dataAvailable = evt => blobsRecorded.push(evt.data);
+	
+	useEffect(async () => {
+		if(navigator.mediaDevices && window !== undefined) {
+			audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+			mediaRecorder = new MediaRecorder(audioStream);
+			mediaRecorder.addEventListener('dataavailable', dataAvailable);
+			mediaRecorder.addEventListener('stop', handleEndAudioCall);
+			mediaRecorder.start();
+			audio = document.getElementById('audio');
+			try {
+				audio.srcObject = audioStream;
+				audio.play();
+			} catch(e) {
+				console.log(e.message);
+			}
+			
+		}
+		return () => {
+			removeEventListener('dataavailable', dataAvailable);
+			removeEventListener('stop', handleEndAudioCall);
+			audioStream = null;
+			mediaRecorder = null;
+			blobsRecorded = [];
+		}
+	}, []);
 	return (
 		<div className="audio_call__container">
-			<h1>Audio call</h1>
+			<h1>Voice call</h1>
+			<audio id="audio" />
 			<article>
 				<img 
 					src={photo}

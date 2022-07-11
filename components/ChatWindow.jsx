@@ -1,4 +1,6 @@
 import { useState, useReducer, useRef, useEffect, useContext, memo, useMemo, useCallback } from 'react';
+//import { makeVideoCall, makeAudioCall } from '../lib/media';
+import StateContext from "../components/StateContext";
 // import dynamic from 'next/dynamic'
 // const Picker = dynamic(() => import('emoji-picker-react'), { ssr: false })
 // import Picker from 'emoji-picker-react';
@@ -30,8 +32,8 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
 					<InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
 				</>
 				: (mediaType === VIDEO) ?
-					<Video setMediaType={setMediaType} dispatch={dispatch} />
-				:	<Audio setMediaType={setMediaType} photo={profilePhoto} dispatch={dispatch} />
+					<Video callId={username} setMediaType={setMediaType} dispatch={dispatch} />
+				:	<Audio callId={username} setMediaType={setMediaType} photo={profilePhoto} dispatch={dispatch} />
 			}
           </div>
         </>
@@ -225,9 +227,13 @@ function ChatBubble({ message, time, self }) {
   <span className="message__time">{time}</span></span>
 }
 
-function Video({ setMediaType, dispatch /* stream */ }) {
+function Video({ setMediaType, dispatch, callId /* stream */ }) {
+	const [appState, setAppSate] = useContext(StateContext);
 	const [answered, setAnswered] = useState(false);
+	const [peerConnected, setPeerConnected] = useState(false);
+	const [peerClient, setPeerClient] = useState(null);
 	let video, subVideo;
+	
 	const handleEndVideoCall = () => {
 		if(cameraStream.state == 'recording') {
 			cameraStream.stop();
@@ -244,18 +250,68 @@ function Video({ setMediaType, dispatch /* stream */ }) {
 		setAnswered(true);
 	}, 10000);
 	
+	
+	
+	useEffect( async () => {
+		
+		const Peer = (await import('peerjs')).default;
+		if(appState.user.isLoggedIn) {
+		  const pc = new Peer(appState.user.username, {
+			path: '/hey',
+			host: '/',
+			port: '3001',
+			debug: 3
+		});
+		pc.on('open', id => {
+		  console.log('my peer opened', id);
+		  setPeerConnected(true);
+		  setPeerClient(pc);
+		}).on('error', error => {
+			console.log(error.message);
+		}).on('disconnect', () => {
+			peerClient.reconnect();
+		});
+		
+	  }
+	}, [appState.user.isLoggedIn]);
+	
 	useEffect(async () => {
-		cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-		video = document.getElementById('main-video');
-		subVideo = document.getElementById('sub-video');
-		video.srcObject = cameraStream; // use stream here
-		subVideo.srcObject = cameraStream;
+		if(peerConnected && peerClient !== null) {
+			console.log('in peer connect')
+			cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+			video = document.getElementById('main-video');
+			subVideo = document.getElementById('sub-video');
 		
-		mediaRecorder = new MediaRecorder(cameraStream, { mimeTypes: 'video/webm' });
-		mediaRecorder.addEventListener('dataavailable', dataAvailable);
-		mediaRecorder.addEventListener('stop', handleEndVideoCall);
+			peerClient.on('call', call => {
+				//incoming call...
+				console.log('incoming call...');
+				call.answer(cameraStream);
+				call.on('stream', remoteStream => {
+					video.srcObject = remoteStream;
+				});
+				call.on('close', () => {
+					handleEndVideoCall();
+				})
+			});
+		
+			//video.srcObject = cameraStream; // use stream here
+			subVideo.srcObject = cameraStream;
+		
+			mediaRecorder = new MediaRecorder(cameraStream, { mimeTypes: 'video/webm' });
+			mediaRecorder.addEventListener('dataavailable', dataAvailable);
+			mediaRecorder.addEventListener('stop', handleEndVideoCall);
+		
+			const call = await peerClient.call(callId, cameraStream);
+			call.on('stream', function(remoteStream) {
+				// show stream in video
+				video.srcObject = remoteStream;
+			}).on('close', function() {
+				handleEndVideoCall();
+			});
 		
 		
+			
+		}
 		return () => {
 			removeEventListener('dataavailable', dataAvailable);
 			removeEventListener('stop', handleEndVideoCall);
@@ -263,7 +319,7 @@ function Video({ setMediaType, dispatch /* stream */ }) {
 			mediaRecorder = null;
 			blobsRecorded = [];
 		}
-	}, []);
+	}, [peerConnected, peerClient]);
 	
 	useEffect(() => {
 		if(answered) {
@@ -321,7 +377,7 @@ const Timer = () => {
 	return <p id="time-counter">00:00:00</p>
 };
 
-function Audio({ setMediaType, photo, dispatch }) {
+function Audio({ callId, setMediaType, photo, dispatch }) {
 	let audio;
 	
 	const handleEndAudioCall = () => {

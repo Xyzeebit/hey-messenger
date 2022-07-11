@@ -11,6 +11,7 @@ import {
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { fetchUser } from "../lib/fetchUser";
+import { makeVideoCall, answerVideoCall } from "../lib/media";
 import { writeMessage } from "../lib/write-message";
 import Layout from "../components/Layout";
 import { ContactList } from "../components/Contact";
@@ -183,22 +184,25 @@ export default function Home() {
   //   return () => window.removeEventListener('visibilitychange', visibleHandler);
   // }, []);
   
-  useEffect( async() => {
+  /*useEffect( async() => {
 	  const Peer = (await import('peerjs')).default;
-	  const myPeer = new Peer(undefined, {
-		  path: '/hey',
-		  host: '/',
-		  port: '3001',
-		  debug: 3
-	  });
-	  myPeer.on('open', id => {
-		  console.log('my peer opened');
+	  if(appState.user.isLoggedIn) {
+		  const myPeer = new Peer(appState.user.username, {
+			path: '/hey',
+			host: '/',
+			port: '3001',
+			debug: 3
+		});
+		myPeer.on('open', id => {
+		  console.log('my peer opened', id);
 		  // socket.emit('join-meet', {});
-	  });
+		});
+		
+	  }
 	  
 	  
 	  
-  }, []);
+  }, [appState.user.isLoggedIn]);*/
 
   if (loading) {
     return (

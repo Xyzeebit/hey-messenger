@@ -365,7 +365,7 @@ function Audio({ setMediaType, photo, dispatch }) {
 			<audio id="audio" />
 			<article>
 				<img 
-					src={photo}
+					src={`uploads/${photo}`}
 					alt=""
 					width="150"
 					height="150"

@@ -27,7 +27,7 @@ let sendingCount = 0;
 export default function Home() {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [appState, setAppState] = useContext(StateContext);
-  const { contacts, newConversation } = state;
+  const { contacts, newConversation, peerCall } = state;
   const [newMessage, setMessage] = useState({ mid: "", message: {} });
   const [oldMsgId, setOldMsgId] = useState("");
   const [isOnline, setOnline] = useState({ online: false, username: "" });
@@ -184,25 +184,35 @@ export default function Home() {
   //   return () => window.removeEventListener('visibilitychange', visibleHandler);
   // }, []);
   
-  /*useEffect( async() => {
+  useEffect( async() => {
 	  const Peer = (await import('peerjs')).default;
 	  if(appState.user.isLoggedIn) {
-		  const myPeer = new Peer(appState.user.username, {
+		  const client = new Peer(appState.user.username, {
 			path: '/hey',
 			host: '/',
 			port: '3001',
 			debug: 3
 		});
-		myPeer.on('open', id => {
+		client.on('open', id => {
 		  console.log('my peer opened', id);
-		  // socket.emit('join-meet', {});
+		  window.peer = client;
 		});
+		
+		/*client.on('connection', conn => {
+			conn.on('data', data => {
+				console.log(data);
+			})
+			.on('open', () => {
+				conn.send('hello from', appState.user.username);
+			})
+		});*/
 		
 	  }
 	  
 	  
 	  
-  }, [appState.user.isLoggedIn]);*/
+  }, [appState.user.isLoggedIn]);
+  
 
   if (loading) {
     return (
@@ -227,6 +237,7 @@ export default function Home() {
 				<ChatWindow
 					contact={newConversation}
 					owner={appState.user.username}
+					incoming={peerCall}
 					dispatch={dispatch}
 				/>
 

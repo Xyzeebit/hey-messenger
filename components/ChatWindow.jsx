@@ -13,9 +13,23 @@ let blobsRecorded = [];
 let audioStream = null;
 
 
-export default function ChatWindow ({ contact, owner, dispatch }) {
+export default function ChatWindow ({ contact, owner, incoming, dispatch }) {
   const [mediaType, setMediaType] = useState(TEXT);
   const { name, chatId, username, id, profilePhoto, messages, showChatWindow, onCall } = contact;
+  console.log('incoming...', incoming)
+  /*useEffect(() => {
+	  try {
+		const peer = window.peer;
+		const conn = peer.connect(username);
+		conn.on('open', () => {
+			console.log('connection opened with', username);
+			conn.send('hi from here');
+		})
+	  } catch(e) {
+		  
+	  }
+	  return () => conn = null;
+  }, []);*/
 
   return (
     <div className="chat__window"
@@ -32,7 +46,7 @@ export default function ChatWindow ({ contact, owner, dispatch }) {
 					<InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
 				</>
 				: (mediaType === VIDEO) ?
-					<Video callId={username} setMediaType={setMediaType} dispatch={dispatch} />
+					<Video callId={username} setMediaType={setMediaType} incoming={incoming} dispatch={dispatch} />
 				:	<Audio callId={username} setMediaType={setMediaType} photo={profilePhoto} dispatch={dispatch} />
 			}
           </div>
@@ -58,11 +72,13 @@ const ChatBar = ({ name, photo, setMediaType, showChatWindow, onCall, dispatch }
 	  console.log('audio calls');
 	  setMediaType(AUDIO);
 	  dispatch({ type: 'ON_CALL', onCall: true });
+	  dispatch({ 'INCOMING': false });
   }
   const handleVideoCall = () => {
 	  console.log('video calls');
 	  setMediaType(VIDEO);
 	  dispatch({ type: 'ON_CALL', onCall: true });
+	  dispatch({ 'INCOMING': false });
   }
   
   return (
@@ -125,7 +141,7 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
   }
 
   const handleSendMessage = evt => {
-
+	
     const message = {
       from,
       to: sendTo,
@@ -178,7 +194,7 @@ const InputBar = ({ chatId, from, sendTo, dispatch }) => {
         </label>
         <button className="send__message--button"
           onClick={handleSendMessage}
-          disabled={chatInputValue.length < 1 && true}
+          disabled={!chatInputValue}
         >
           <img
             src="/icon-send.svg"
@@ -227,99 +243,98 @@ function ChatBubble({ message, time, self }) {
   <span className="message__time">{time}</span></span>
 }
 
-function Video({ setMediaType, dispatch, callId /* stream */ }) {
+function Video({ setMediaType, dispatch, incoming, callId /* stream */ }) {
 	const [appState, setAppSate] = useContext(StateContext);
 	const [answered, setAnswered] = useState(false);
-	const [peerConnected, setPeerConnected] = useState(false);
-	const [peerClient, setPeerClient] = useState(null);
+	const [connection, setConnection] = useState(null);
 	let video, subVideo;
 	
 	const handleEndVideoCall = () => {
-		if(cameraStream.state == 'recording') {
-			cameraStream.stop();
+		try {
+			//cameraStream.stop();
+			cameraStream.getTracks().forEach(track => track.stop());
+			connection.close();
+		} catch(e) {
+			console.log(e.message);
 		}
-		cameraStream.getTracks().forEach(track => track.stop());
-		clearTimeout(callTimeout);
+		//clearTimeout(callTimeout);
 		setMediaType(TEXT);
 		dispatch({ type: 'ON_CALL', onCall: false });
 	}
 	
 	const dataAvailable = evt => blobsRecorded.push(evt.data);
 	
-	const callTimeout = setTimeout(() => {
+	/*const callTimeout = setTimeout(() => {
 		setAnswered(true);
-	}, 10000);
+	}, 10000);*/
 	
 	
 	
-	useEffect( async () => {
-		
-		const Peer = (await import('peerjs')).default;
-		if(appState.user.isLoggedIn) {
-		  const pc = new Peer(appState.user.username, {
-			path: '/hey',
-			host: '/',
-			port: '3001',
-			debug: 3
-		});
-		pc.on('open', id => {
-		  console.log('my peer opened', id);
-		  setPeerConnected(true);
-		  setPeerClient(pc);
-		}).on('error', error => {
-			console.log(error.message);
-		}).on('disconnect', () => {
-			peerClient.reconnect();
-		});
-		
-	  }
-	}, [appState.user.isLoggedIn]);
 	
-	useEffect(async () => {
-		if(peerConnected && peerClient !== null) {
-			console.log('in peer connect')
-			cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+	useEffect(() => {
+		const getUserMedia = navigator.mediaDevices.getUserMedia || 
+				navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia;
+		getUserMedia({ video: true, audio: true }).then((stream) => {
 			video = document.getElementById('main-video');
 			subVideo = document.getElementById('sub-video');
-		
-			peerClient.on('call', call => {
-				//incoming call...
-				console.log('incoming call...');
-				call.answer(cameraStream);
-				call.on('stream', remoteStream => {
-					video.srcObject = remoteStream;
-				});
-				call.on('close', () => {
-					handleEndVideoCall();
-				})
-			});
-		
-			//video.srcObject = cameraStream; // use stream here
-			subVideo.srcObject = cameraStream;
-		
-			mediaRecorder = new MediaRecorder(cameraStream, { mimeTypes: 'video/webm' });
-			mediaRecorder.addEventListener('dataavailable', dataAvailable);
-			mediaRecorder.addEventListener('stop', handleEndVideoCall);
-		
-			const call = await peerClient.call(callId, cameraStream);
-			call.on('stream', function(remoteStream) {
-				// show stream in video
-				video.srcObject = remoteStream;
-			}).on('close', function() {
-				handleEndVideoCall();
-			});
-		
-		
 			
-		}
+			const peer = window.peer;
+			if(peer !== null) {
+				if(!incoming){
+					peer.on('call', call => {
+						//incoming call...
+						console.log('incoming call...');
+						const answer = true; //confirm('do you want to answer this call?')
+						if(answer) {
+							subVideo.srcObject = cameraStream;
+							call.answer(cameraStream);
+							setAnswered(true);
+							call.on('stream', remoteStream => {
+								video.srcObject = remoteStream;
+							});
+							call.on('close', () => {
+								handleEndVideoCall();
+							});
+						}
+					})
+				} else {
+					try {
+						conn = peer.connect(callId);
+						conn.on('open', () => {
+							console.log('connection opened with', username);
+							//conn.send('hi from here');
+							
+						}).on('connection', connection => {
+							setConnection(connection);
+						})
+						
+						const call = peer.call(callId, cameraStream);
+						subVideo.srcObject = cameraStream;
+						call.on('stream', function(remoteStream) {
+							// show stream in video
+							video.srcObject = remoteStream;
+							video.autoplay = true;
+						}).on('close', function() {
+							handleEndVideoCall();
+						});
+					} catch(e) {
+		  
+					}
+				}
+			}
+		}).catch(e => {
+			console.log(e.message)
+		});
+		
+		
 		return () => {
-			removeEventListener('dataavailable', dataAvailable);
-			removeEventListener('stop', handleEndVideoCall);
-			cameraStream = null;
-			mediaRecorder = null;
-			blobsRecorded = [];
+			//removeEventListener('dataavailable', dataAvailable);
+			//removeEventListener('stop', handleEndVideoCall);
+			//cameraStream = null;
+			//mediaRecorder = null;
+			//blobsRecorded = [];
 		}
-	}, [peerConnected, peerClient]);
+	}, [incoming]);
 	
 	useEffect(() => {
 		if(answered) {

@@ -16,7 +16,7 @@ let audioStream = null;
 export default function ChatWindow ({ contact, owner, incoming, dispatch }) {
   const [mediaType, setMediaType] = useState(TEXT);
   const { name, chatId, username, id, profilePhoto, messages, showChatWindow, onCall } = contact;
-  console.log('incoming...', incoming)
+  
   /*useEffect(() => {
 	  try {
 		const peer = window.peer;
@@ -72,13 +72,13 @@ const ChatBar = ({ name, photo, setMediaType, showChatWindow, onCall, dispatch }
 	  console.log('audio calls');
 	  setMediaType(AUDIO);
 	  dispatch({ type: 'ON_CALL', onCall: true });
-	  dispatch({ 'INCOMING': false });
+	  //dispatch({ 'INCOMING': false });
   }
   const handleVideoCall = () => {
 	  console.log('video calls');
 	  setMediaType(VIDEO);
 	  dispatch({ type: 'ON_CALL', onCall: true });
-	  dispatch({ 'INCOMING': false });
+	  //dispatch({ 'INCOMING': false });
   }
   
   return (
@@ -272,36 +272,32 @@ function Video({ setMediaType, dispatch, incoming, callId /* stream */ }) {
 	
 	
 	useEffect(() => {
-		const getUserMedia = navigator.mediaDevices.getUserMedia || 
-				navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia;
-		getUserMedia({ video: true, audio: true }).then((stream) => {
+		//const getUserMedia = navigator.mediaDevices.getUserMedia || 
+				//navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia;
+		navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
 			video = document.getElementById('main-video');
 			subVideo = document.getElementById('sub-video');
+			cameraStream = stream;
+			console.log('incoming...', window.incoming);
+			subVideo.srcObject = stream;
 			
 			const peer = window.peer;
 			if(peer !== null) {
-				if(!incoming){
-					peer.on('call', call => {
-						//incoming call...
-						console.log('incoming call...');
-						const answer = true; //confirm('do you want to answer this call?')
-						if(answer) {
-							subVideo.srcObject = cameraStream;
-							call.answer(cameraStream);
-							setAnswered(true);
-							call.on('stream', remoteStream => {
-								video.srcObject = remoteStream;
-							});
-							call.on('close', () => {
-								handleEndVideoCall();
-							});
-						}
-					})
+				if(window.incoming){
+					const call = window.call;
+					call.answer(stream);
+					setAnswered(true);
+					call.on('stream', remoteStream => {
+						video.srcObject = remoteStream;
+					});
+					call.on('close', () => {
+						handleEndVideoCall();
+					});
 				} else {
 					try {
 						conn = peer.connect(callId);
 						conn.on('open', () => {
-							console.log('connection opened with', username);
+							console.log('connection opened with', callId);
 							//conn.send('hi from here');
 							
 						}).on('connection', connection => {
@@ -309,8 +305,9 @@ function Video({ setMediaType, dispatch, incoming, callId /* stream */ }) {
 						})
 						
 						const call = peer.call(callId, cameraStream);
-						subVideo.srcObject = cameraStream;
+						
 						call.on('stream', function(remoteStream) {
+							setAnswered(true);
 							// show stream in video
 							video.srcObject = remoteStream;
 							video.autoplay = true;

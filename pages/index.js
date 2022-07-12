@@ -32,6 +32,7 @@ export default function Home() {
   const [oldMsgId, setOldMsgId] = useState("");
   const [isOnline, setOnline] = useState({ online: false, username: "" });
   const [loading, setLoading] = useState(true);
+  const [incoming, setIncoming] = useState(false);
   const router = useRouter();
 
   const visibleHandler = (evt) => {
@@ -198,14 +199,19 @@ export default function Home() {
 		  window.peer = client;
 		});
 		
-		/*client.on('connection', conn => {
+		client.on('connection', conn => {
 			conn.on('data', data => {
 				console.log(data);
 			})
 			.on('open', () => {
 				conn.send('hello from', appState.user.username);
 			})
-		});*/
+		});
+		client.on('call', call => {
+			window.incoming = true;
+			window.call = call;
+		});
+		
 		
 	  }
 	  
@@ -237,7 +243,7 @@ export default function Home() {
 				<ChatWindow
 					contact={newConversation}
 					owner={appState.user.username}
-					incoming={peerCall}
+					incoming={incoming}
 					dispatch={dispatch}
 				/>
 

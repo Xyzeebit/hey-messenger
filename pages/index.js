@@ -210,6 +210,8 @@ export default function Home() {
 		client.on('call', call => {
 			window.incoming = true;
 			window.call = call;
+			console.log('Incoming call from main');
+			dispatch({ type: 'INCOMING', call: true, caller: call.src });
 		});
 		
 		
@@ -239,7 +241,7 @@ export default function Home() {
           <div className="main">
 		  {appState.user.contacts.length > 0 ? 
 			<>
-				<ContactList contacts={contacts} dispatch={dispatch} onCall={newConversation.onCall} />
+				<ContactList contacts={contacts} dispatch={dispatch} incoming={peerCall} />
 				<ChatWindow
 					contact={newConversation}
 					owner={appState.user.username}

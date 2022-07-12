@@ -12,7 +12,10 @@ export const initialState = {
     showChatWindow: false,
 	onCall: false,
   },
-  peerCall: true,
+  peerCall: {
+	  call: true,
+	  caller: 'amelia'
+  },
 };
 
 function contactsReducer(state, action) {
@@ -155,7 +158,7 @@ function newConversationReducer(state, action) {
 function peerReducer(state, action) {
 	switch(action.type) {
 		case 'INCOMING':
-			state = action.incoming;
+			state = { caller: action.caller, peerCall: action.call };
 			return state;
 		case 'GET_CALL':
 			return state;
@@ -169,7 +172,7 @@ export function appReducer(state, action) {
     user: userReducer(state.user, action),
     newConversation: newConversationReducer(state.newConversation, action),
     contacts: contactsReducer(state.contacts, action),
-	peer: peerReducer(state.peer, action),
+	peerCall: peerReducer(state.peerCall, action),
   }
 }
 

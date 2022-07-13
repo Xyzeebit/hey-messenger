@@ -11,6 +11,7 @@ import {
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { fetchUser } from "../lib/fetchUser";
+import { makeVideoCall, answerVideoCall } from "../lib/media";
 import { writeMessage } from "../lib/write-message";
 import Layout from "../components/Layout";
 import { ContactList } from "../components/Contact";
@@ -26,11 +27,12 @@ let sendingCount = 0;
 export default function Home() {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [appState, setAppState] = useContext(StateContext);
-  const { contacts, newConversation } = state;
+  const { contacts, newConversation, peerCall } = state;
   const [newMessage, setMessage] = useState({ mid: "", message: {} });
   const [oldMsgId, setOldMsgId] = useState("");
   const [isOnline, setOnline] = useState({ online: false, username: "" });
   const [loading, setLoading] = useState(true);
+  const [incoming, setIncoming] = useState(false);
   const router = useRouter();
 
   const visibleHandler = (evt) => {
@@ -182,6 +184,47 @@ export default function Home() {
   //   window.addEventListener('visibilitychange', visibleHandler);
   //   return () => window.removeEventListener('visibilitychange', visibleHandler);
   // }, []);
+  
+  useEffect( async() => {
+	  const Peer = (await import('peerjs')).default;
+	  if(appState.user.isLoggedIn) {
+		  const client = new Peer(appState.user.username, {
+			path: '/hey',
+			host: '/',
+			port: '3001',
+			debug: 3
+		});
+		client.on('open', id => {
+		  console.log('my peer opened', id);
+		  window.peer = client;
+		});
+		let conn;
+		client.on('connection', conn => {
+			conn.on('data', data => {
+				window.conn = data;
+				conn = data;
+			})
+			.on('open', () => {
+				conn.send('hello from', appState.user.username);
+			})
+		});
+		if(conn !== undefined) {
+			conn.on('call', call => {
+				window.incoming = true;
+				window.call = call;
+				console.log('Incoming call from main');
+				dispatch({ type: 'INCOMING', call: true, caller: call.src });
+			});
+		}
+		
+		
+		
+	  }
+	  
+	  
+	  
+  }, [appState.user.isLoggedIn]);
+  
 
   if (loading) {
     return (
@@ -202,10 +245,11 @@ export default function Home() {
           <div className="main">
 		  {appState.user.contacts.length > 0 ? 
 			<>
-				<ContactList contacts={contacts} dispatch={dispatch} />
+				<ContactList contacts={contacts} dispatch={dispatch} incoming={peerCall} />
 				<ChatWindow
 					contact={newConversation}
 					owner={appState.user.username}
+					incoming={incoming}
 					dispatch={dispatch}
 				/>
 

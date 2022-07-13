@@ -22,6 +22,7 @@ export function Contact({ id, name, username, profilePhoto,
   return (
     <div className="contact"
       onClick={handleStartChat}
+	  aria-label={`username ${username}`}
     >
         <CircleImage image={profilePhoto} isOnline={isOnline} />
         <div className="contact__name--message">
@@ -39,8 +40,37 @@ export function Contact({ id, name, username, profilePhoto,
   );
 }
 
-export const ContactList = ({ contacts, dispatch }) => {
+const CallContact = ({ caller, type }) => {
+	const rejectCall = () => {}
+	const answerCall = () => {}
+	return (
+		<article className="contact">
+			<button onClick={rejectCall}>
+				<img 
+					src="/icon-call.svg"
+					alt="reject call call icon"
+					width="30"
+					height="30"
+				/>
+			</button>
+			<p>{type} call from <span>{caller}</span></p>
+			<button onClick={answerCall}>
+				<img 
+					src="/icon-call.svg"
+					alt="reject call call icon"
+					width="30"
+					height="30"
+				/>
+			</button>
+			<img 
+			/>
+		</article>
+	);
+}
+
+export const ContactList = ({ contacts, dispatch, incoming }) => {
   const [appState] = useContext(StateContext);
+  //console.log('ContactList:', incoming)
   useEffect(() => {
     if(appState.user.isLoggedIn) {
       if(appState.user.contacts) {
@@ -66,11 +96,14 @@ export const ContactList = ({ contacts, dispatch }) => {
   // console.log('finding user contacts', contacts);
 
   return (
-    <div className="contact__list">
+    <div className="contact__list" aria-label="My contact list">
       { contacts &&
         contacts.map((contact, i) => (
-          <div key={contact.id}>
-            <Contact {...contact} dispatch={dispatch} />
+          <div key={contact.id} aria-label={contact.name}>
+			{incoming.call && contact.username === incoming.caller ? 
+				<CallContact caller={contact.name} type={incoming.type} /> :
+				<Contact {...contact} dispatch={dispatch} />
+			}
             {i < contacts.length - 1 &&
               <div className="contact__divider">
                 <div className="contact__divider--left"/>

@@ -9,7 +9,13 @@ export const initialState = {
     username: '',
     profilePhoto: '',
     messages: [],
-    showChatWindow: false
+    showChatWindow: false,
+	onCall: false,
+  },
+  peerCall: {
+	  call: true,
+	  caller: '',
+	  type: 'voice'
   },
 };
 
@@ -138,9 +144,11 @@ function userReducer(state, action) {
 function newConversationReducer(state, action) {
   switch (action.type) {
     case 'START_CHAT':
+		if(state.onCall) return state;
       return {...action.contact, showChatWindow: action.showChatWindow };
     case 'SHOW_CHAT_WINDOW': return { ...state, showChatWindow: action.showChatWindow }
-    case 'CLOSE_CHAT_WINDOW': return { ...state, showChatWindow: action.showChatWindow }
+    case 'CLOSE_CHAT_WINDOW': return { ...state, showChatWindow: action.showChatWindow, onCall: false };
+	case 'ON_CALL': return { ...state, onCall: action.onCall };
 
       break;
     default: return state;
@@ -148,12 +156,24 @@ function newConversationReducer(state, action) {
   }
 }
 
+function peerReducer(state, action) {
+	switch(action.type) {
+		case 'INCOMING':
+			state = { caller: action.caller, peerCall: action.call };
+			return state;
+		case 'GET_CALL':
+			return state;
+		default: return state;
+	}
+}
+
 
 export function appReducer(state, action) {
   return {
     user: userReducer(state.user, action),
     newConversation: newConversationReducer(state.newConversation, action),
-    contacts: contactsReducer(state.contacts, action)
+    contacts: contactsReducer(state.contacts, action),
+	peerCall: peerReducer(state.peerCall, action),
   }
 }
 

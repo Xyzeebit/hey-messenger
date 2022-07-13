@@ -107,3 +107,48 @@
     background: $primary;
   }
 }
+
+article.contact {
+	cursor: default;
+	button {
+		border-radius: 100px;
+		padding: 10px;
+		border: none;
+		outline: none;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transition: all 300ms ease;
+		cursor: pointer;
+		&:active {
+			transform: scale(0.8);
+		}
+		&:hover {
+			transform: scale(1.1);
+			box-shadow: 1px 1px 1px #666;
+		}
+	}
+	button:nth-child(1) {
+		background: $secondary;
+		img {
+			transform: rotateX(-180deg)
+		}
+	}
+	button:nth-child(3) {
+		background: $accent;
+		
+		img {
+			transform: rotateY(180deg)
+		}
+	}
+	p {
+		padding: 0 20px 0 20px;
+		text-align: center;
+	}
+	p span {
+		font-weight: 500;
+	}
+	&:hover {
+		background: none;
+	}
+}

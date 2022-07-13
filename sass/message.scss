@@ -37,7 +37,7 @@
 .chats {
   padding: 1rem;
   background: $white;
-  padding-bottom: 8rem;
+  padding-bottom: 9rem;
   overflow-y: auto;
   width: 100%;
   height: 80%;
@@ -47,6 +47,14 @@
   // left: 0;
   // right: 0;
   // z-index: 0;
+  
+  @include mobile {
+	
+	
+  }
+  @include tablet {
+  
+  }
 }
 
 .chat__window {
@@ -64,7 +72,7 @@
   // top: 0;
   // left: 2px;
   // right: 0;
-  z-index: 2;
+  z-index: 5;
   // width: 100%;
   background: $accent;
   display: flex;
@@ -98,11 +106,20 @@
   align-items: center;
 }
 .input__bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  // width: 100%;
+  position: fixed;
+  @include mobile {
+	bottom: 50px;
+	left: 5px;
+	right: 0;
+  }
+  @include tablet {
+	bottom: 0;
+	left: 16px;
+	right: 16px;
+  }
+  
+  
+  //width: 100%;
   padding: 1rem;
   background: $white;
   display: flex;
@@ -152,6 +169,9 @@
     resize: none;
     @include mobile {
       // height: 2rem;
+	  &:focus {
+		//margin-bottom: 100px;
+	  }
     }
     @include tablet {
       // height: 2.5rem;
@@ -194,7 +214,11 @@
     }
   }
 }
-
+.go__back {
+	@include tablet {
+		display: none;
+	}
+}
 .bar__button {
   background: none;
   outline: none;
@@ -202,8 +226,9 @@
   transition: all 300ms forward;
   border-radius: 100px;
   padding: 0.4rem;
+  
   @include tablet {
-    display: none;
+    //display: none;
   }
   &:active {
     background: $gray;
@@ -224,4 +249,101 @@
 }
 .icon-video {
   transform: rotateX(180deg);
+}
+
+
+.video_call__container {
+	height: 100%;
+	width: 100%;
+	position: relative;
+	
+	#main-video {
+		@include mobile {
+			position: absolute;
+			width: 100vw;
+			height: 100%;
+			left: -15px;
+			object-fit: fill;
+		}
+		@include tablet {
+			width: 100%;
+			left: 0;
+		}
+		top: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 1;
+		
+	}
+	#sub-video {
+		@include mobile {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			z-index: 2;
+			object-fit: fill;
+			transition: all 300ms ease-in;
+		}
+	}
+	.sub_video__resized {
+		@include mobile {
+			width: 100px !important;
+			height: 150px !important;
+			right: 20px;
+			bottom: 20px;
+			border: 2px solid $gray;
+			border-radius: 10px;
+		}
+	}
+	.call_end__container {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 50px;
+		z-index: 3;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+	}
+	.call_end__container button {
+		//margin-right: 20px;
+		background: none;
+		outline: none;
+		border: none;
+		box-shadow: 0px 0px 1px $gray;
+		border-radius: 100px;
+		&:hover {
+			background: $secondary;
+		}
+	}
+}
+.audio_call__container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: $primary;
+	
+	h1 {
+		margin-bottom: 30px;
+	}
+	article {
+		margin-bottom: 30px;
+		img {
+			border-radius: 100px;
+			width: 200px;
+			height: 200px;
+		}
+	}
+	.call_end__container button {
+		border-radius: 100px;
+		border: 2px solid $secondary;
+		box-shadow: 1px 0px 2px $gray;
+		&:hover {
+			background: $secondary;
+		}
+	}
 }

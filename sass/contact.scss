@@ -109,9 +109,10 @@
 }
 
 article.contact {
+	cursor: default;
 	button {
 		border-radius: 100px;
-		padding: 5px;
+		padding: 10px;
 		border: none;
 		outline: none;
 		display: flex;
@@ -123,7 +124,7 @@ article.contact {
 			transform: scale(0.8);
 		}
 		&:hover {
-			//border: 2px solid $white;
+			transform: scale(1.1);
 			box-shadow: 1px 1px 1px #666;
 		}
 	}
@@ -140,10 +141,14 @@ article.contact {
 			transform: rotateY(180deg)
 		}
 	}
-	h3 {
+	p {
 		padding: 0 20px 0 20px;
+		text-align: center;
+	}
+	p span {
+		font-weight: 500;
 	}
 	&:hover {
-		background: $gray;
+		background: none;
 	}
 }

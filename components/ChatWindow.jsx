@@ -17,19 +17,23 @@ export default function ChatWindow ({ contact, owner, incoming, dispatch }) {
   const [mediaType, setMediaType] = useState(TEXT);
   const { name, chatId, username, id, profilePhoto, messages, showChatWindow, onCall } = contact;
   
-  /*useEffect(() => {
+  useEffect(() => {
 	  try {
 		const peer = window.peer;
 		const conn = peer.connect(username);
-		conn.on('open', () => {
-			console.log('connection opened with', username);
-			conn.send('hi from here');
+		conn.on('connection', connection => {
+			console.log('users connected')
+			window.conn = connection;
+		}).on('error', error => {
+			console.log(error.message);
+		}).on('open', () => {
+			conn.send('hi')
 		})
 	  } catch(e) {
-		  
+		  console.log(e.message)
 	  }
 	  return () => conn = null;
-  }, []);*/
+  }, [])
 
   return (
     <div className="chat__window"
@@ -278,12 +282,12 @@ function Video({ setMediaType, dispatch, incoming, callId /* stream */ }) {
 			video = document.getElementById('main-video');
 			subVideo = document.getElementById('sub-video');
 			cameraStream = stream;
-			console.log('incoming...', window.incoming);
+			//console.log('incoming...', window.incoming);
 			subVideo.srcObject = stream;
 			
 			const peer = window.peer;
 			if(peer !== null) {
-				if(window.incoming){
+				if(window.conn){
 					const call = window.call;
 					call.answer(stream);
 					setAnswered(true);
@@ -296,11 +300,7 @@ function Video({ setMediaType, dispatch, incoming, callId /* stream */ }) {
 				} else {
 					try {
 						conn = peer.connect(callId);
-						conn.on('open', () => {
-							console.log('connection opened with', callId);
-							//conn.send('hi from here');
-							
-						}).on('connection', connection => {
+						conn.on('connection', connection => {
 							setConnection(connection);
 						})
 						

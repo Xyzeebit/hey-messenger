@@ -14,7 +14,8 @@ export const initialState = {
   },
   peerCall: {
 	  call: true,
-	  caller: 'amelia'
+	  caller: 'xsmith',
+	  type: 'voice'
   },
 };
 

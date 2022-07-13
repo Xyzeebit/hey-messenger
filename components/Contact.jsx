@@ -40,7 +40,7 @@ export function Contact({ id, name, username, profilePhoto,
   );
 }
 
-const CallContact = ({ caller }) => {
+const CallContact = ({ caller, type }) => {
 	const rejectCall = () => {}
 	const answerCall = () => {}
 	return (
@@ -49,17 +49,17 @@ const CallContact = ({ caller }) => {
 				<img 
 					src="/icon-call.svg"
 					alt="reject call call icon"
-					width="45"
-					height="45"
+					width="30"
+					height="30"
 				/>
 			</button>
-			<h3>{caller}</h3>
+			<p>{type} call from <span>{caller}</span></p>
 			<button onClick={answerCall}>
 				<img 
 					src="/icon-call.svg"
 					alt="reject call call icon"
-					width="45"
-					height="45"
+					width="30"
+					height="30"
 				/>
 			</button>
 			<img 
@@ -70,7 +70,7 @@ const CallContact = ({ caller }) => {
 
 export const ContactList = ({ contacts, dispatch, incoming }) => {
   const [appState] = useContext(StateContext);
-  console.log('ContactList:', incoming)
+  //console.log('ContactList:', incoming)
   useEffect(() => {
     if(appState.user.isLoggedIn) {
       if(appState.user.contacts) {
@@ -101,7 +101,7 @@ export const ContactList = ({ contacts, dispatch, incoming }) => {
         contacts.map((contact, i) => (
           <div key={contact.id} aria-label={contact.name}>
 			{incoming.call && contact.username === incoming.caller ? 
-				<CallContact caller={incoming.caller} /> :
+				<CallContact caller={contact.name} type={incoming.type} /> :
 				<Contact {...contact} dispatch={dispatch} />
 			}
             {i < contacts.length - 1 &&

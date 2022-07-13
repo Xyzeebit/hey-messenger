@@ -106,9 +106,12 @@
   background: #e3e2e7;
 }
 
+article.contact {
+  cursor: default;
+}
 article.contact button {
   border-radius: 100px;
-  padding: 5px;
+  padding: 10px;
   border: none;
   outline: none;
   display: flex;
@@ -121,6 +124,7 @@ article.contact button:active {
   transform: scale(0.8);
 }
 article.contact button:hover {
+  transform: scale(1.1);
   box-shadow: 1px 1px 1px #666;
 }
 article.contact button:nth-child(1) {
@@ -135,11 +139,15 @@ article.contact button:nth-child(3) {
 article.contact button:nth-child(3) img {
   transform: rotateY(180deg);
 }
-article.contact h3 {
+article.contact p {
   padding: 0 20px 0 20px;
+  text-align: center;
+}
+article.contact p span {
+  font-weight: 500;
 }
 article.contact:hover {
-  background: grey;
+  background: none;
 }
 
 /*# sourceMappingURL=contact.css.map */

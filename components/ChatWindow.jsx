@@ -21,18 +21,9 @@ export default function ChatWindow ({ contact, owner, incoming, dispatch }) {
 	  try {
 		const peer = window.peer;
 		const conn = peer.connect(username);
-		conn.on('connection', connection => {
-			console.log('users connected')
-			window.conn = connection;
-		}).on('error', error => {
-			console.log(error.message);
-		}).on('open', () => {
-			conn.send('hi')
-		})
 	  } catch(e) {
 		  console.log(e.message)
 	  }
-	  return () => conn = null;
   }, [])
 
   return (

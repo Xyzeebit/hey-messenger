@@ -198,21 +198,25 @@ export default function Home() {
 		  console.log('my peer opened', id);
 		  window.peer = client;
 		});
-		
+		let conn;
 		client.on('connection', conn => {
 			conn.on('data', data => {
-				console.log(data);
+				window.conn = data;
+				conn = data;
 			})
 			.on('open', () => {
 				conn.send('hello from', appState.user.username);
 			})
 		});
-		client.on('call', call => {
-			window.incoming = true;
-			window.call = call;
-			console.log('Incoming call from main');
-			dispatch({ type: 'INCOMING', call: true, caller: call.src });
-		});
+		if(conn !== undefined) {
+			conn.on('call', call => {
+				window.incoming = true;
+				window.call = call;
+				console.log('Incoming call from main');
+				dispatch({ type: 'INCOMING', call: true, caller: call.src });
+			});
+		}
+		
 		
 		
 	  }

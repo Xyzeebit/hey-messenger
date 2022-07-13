@@ -139,10 +139,11 @@ export default function Profile() {
 
   const handleFileChange = evt => {
     const fileLimit = 78;
-    const size = evt.target.file[0].size;
+    const size = evt.target.files[0].size;
     const fileInKb = size / 1024;
     if(fileInKb < fileLimit) {
       setFile(evt.target.files[0]);
+	  setData({ ...data, valueChanged: true });
     }
   }
 

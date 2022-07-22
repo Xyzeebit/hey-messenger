@@ -79,7 +79,7 @@ export default function Profile() {
       } else {
         name = data.name;
       }
-      if(editData.email && data.email !== editData.email) {
+      if(isEmail(data.email) && data.email !== editData.email) {
         email = editData.email;
       } else {
         email = data.email
@@ -324,3 +324,8 @@ const InviteFriend = ({ link, copyText, onClick }) => (
     </div>
   </div>
 );
+
+function isEmail(email) {
+	let pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	return email.match(pattern);
+}

@@ -8,6 +8,9 @@
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint"
   },
+  "engines": {
+    "node": "16.x"
+  },
   "dependencies": {
     "dotenv": "^16.0.1",
     "emoji-picker-react": "^3.5.1",

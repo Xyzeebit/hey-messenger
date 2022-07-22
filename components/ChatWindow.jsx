@@ -99,7 +99,7 @@ const ChatBar = ({ name, photo, setMediaType, showChatWindow, onCall, dispatch }
         <span>{name}</span>
       </div>
 
-      {<div className="chat__bar--right">
+      {/*<div className="chat__bar--right">
         <button className="bar__button" onClick={handleAudioCall} disabled={onCall}>
           <img
             src="/icon-call.svg"
@@ -118,7 +118,7 @@ const ChatBar = ({ name, photo, setMediaType, showChatWindow, onCall, dispatch }
             className="bar__icon icon__video"
           />
         </button>
-      </div>}
+      </div>*/}
     </div>
   );
 }

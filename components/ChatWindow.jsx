@@ -13,18 +13,18 @@ let blobsRecorded = [];
 let audioStream = null;
 
 
-export default function ChatWindow ({ contact, owner, incoming, dispatch }) {
+export default function ChatWindow ({ contact, owner, /*incoming,*/ dispatch }) {
   const [mediaType, setMediaType] = useState(TEXT);
   const { name, chatId, username, id, profilePhoto, messages, showChatWindow, onCall } = contact;
   
-  useEffect(() => {
+  /*useEffect(() => {
 	  try {
 		const peer = window.peer;
 		const conn = peer.connect(username);
 	  } catch(e) {
 		  console.log(e.message)
 	  }
-  }, [])
+  }, [])*/
 
   return (
     <div className="chat__window"
@@ -41,7 +41,7 @@ export default function ChatWindow ({ contact, owner, incoming, dispatch }) {
 					<InputBar chatId={chatId} from={owner} sendTo={username} dispatch={dispatch} />
 				</>
 				: (mediaType === VIDEO) ?
-					<Video callId={username} setMediaType={setMediaType} incoming={incoming} dispatch={dispatch} />
+					<Video callId={username} setMediaType={setMediaType} incoming={''} dispatch={dispatch} />
 				:	<Audio callId={username} setMediaType={setMediaType} photo={profilePhoto} dispatch={dispatch} />
 			}
           </div>

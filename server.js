@@ -41,7 +41,7 @@ app.prepare()
 
     communicator(io);
 
-
+	/*
     const peerExpress = require('express');
     const peerApp = peerExpress();
     const peerServer = require('http').createServer(peerApp);
@@ -58,6 +58,7 @@ app.prepare()
     peerServer.on('disconnect', client => {
 		console.log('peer client disconnected from server');
     });
+	*/
 	
   })
   .catch((error) => {

@@ -32,7 +32,7 @@ export default function Home() {
   const [oldMsgId, setOldMsgId] = useState("");
   const [isOnline, setOnline] = useState({ online: false, username: "" });
   const [loading, setLoading] = useState(true);
-  const [incoming, setIncoming] = useState(false);
+  //const [incoming, setIncoming] = useState(false);
   const router = useRouter();
 
   const visibleHandler = (evt) => {
@@ -185,7 +185,7 @@ export default function Home() {
   //   return () => window.removeEventListener('visibilitychange', visibleHandler);
   // }, []);
   
-  useEffect( async() => {
+  /*useEffect( async() => {
 	  const Peer = (await import('peerjs')).default;
 	  if(appState.user.isLoggedIn) {
 		  const client = new Peer(appState.user.username, {
@@ -223,7 +223,7 @@ export default function Home() {
 	  
 	  
 	  
-  }, [appState.user.isLoggedIn]);
+  }, [appState.user.isLoggedIn]);*/
   
 
   if (loading) {
@@ -249,7 +249,6 @@ export default function Home() {
 				<ChatWindow
 					contact={newConversation}
 					owner={appState.user.username}
-					incoming={incoming}
 					dispatch={dispatch}
 				/>
 
